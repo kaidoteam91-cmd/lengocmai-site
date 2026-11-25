@@ -1,0 +1,2 @@
+{ "name": "lengocmai-site", "private": true, "type": "module",
+  "scripts": { "sync": "node scripts/sync.mjs" }, "engines": { "node": ">=18" } }
