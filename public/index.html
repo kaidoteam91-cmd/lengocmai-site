@@ -406,6 +406,76 @@ body.fbv .fab{display:none}
 .mus,body.inb .mus{left:calc(18px + env(safe-area-inset-left,0px));top:calc(50% + 58px);bottom:auto;width:42px;height:42px}
 @media(max-width:760px){.mus,body.inb .mus{left:calc(14px + env(safe-area-inset-left,0px));top:calc(50% + 50px);width:40px;height:40px}}
 @media(max-width:760px){.htitle{display:block;position:relative}.htitle .k{white-space:nowrap;font-size:min(12px,calc((100vw - 52px)/28));letter-spacing:.05em}.htitle h1{white-space:nowrap;font-size:min(34px,calc((100vw - 52px)/11.3))}.hdeco{position:absolute;right:-2px;top:-74px;width:66px;margin:0}.tile{aspect-ratio:2/1}}
+
+/* giỏ hàng (chế độ khách, lưu trên trình duyệt) */
+.hr{justify-self:end;display:flex;align-items:center;gap:12px}
+.cartb{position:relative;width:42px;height:42px;display:grid;place-items:center;border-radius:50%;color:var(--ink);background:none;border:0;cursor:pointer;transition:background .3s}
+.cartb:hover{background:var(--paper)}
+.cartb i{position:absolute;top:1px;right:-1px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--red);color:#fff;font:700 11px/18px Montserrat,sans-serif;font-style:normal;text-align:center}
+.cartb i[hidden]{display:none}
+.cartb.bump{animation:bump .5s var(--ease)}
+@keyframes bump{40%{transform:scale(1.25)}}
+.sizes.need{animation:need .5s}
+@keyframes need{25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-3px)}}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.main[disabled]:hover{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.lnk{background:none;border:0;padding:0;font:inherit;font-size:12px;color:var(--soft);text-decoration:underline;cursor:pointer}
+.lnk:hover{color:var(--ink)}
+.cart{position:fixed;inset:0;z-index:85;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .35s}
+.cart.open{opacity:1;pointer-events:auto}
+.cpan{position:absolute;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--bg);color:var(--ink);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .55s var(--ease)}
+.cart.open .cpan{transform:none}
+.chd{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.chd h3{margin:0;font-size:14px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.cx{width:40px;height:40px;flex:0 0 auto;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;background:var(--bg);color:var(--ink);cursor:pointer}
+.cbody{flex:1;overflow-y:auto;padding:4px 20px;overscroll-behavior:contain}
+.cl{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.cl img{width:72px;aspect-ratio:3/4;object-fit:cover;background:var(--paper);display:block}
+.cl b{display:block;font-size:13px;line-height:1.3;text-transform:uppercase}
+.cl small{display:block;color:var(--soft);font-size:12px;line-height:1.45;margin-top:2px}
+.cl .cso{color:var(--red)}
+.cp{font-weight:700;color:var(--red);font-size:14px;margin-top:4px}
+.qty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:99px;margin-top:8px}
+.qty button{width:32px;height:30px;background:none;border:0;color:var(--ink);font-size:16px;cursor:pointer}
+.qty span{min-width:20px;text-align:center;font-size:13px;font-weight:600}
+.crm{align-self:start;background:none;border:0;font-size:12px;color:var(--soft);text-decoration:underline;cursor:pointer;padding:2px}
+.cft{border-top:1px solid var(--line);padding:16px 20px calc(16px + env(safe-area-inset-bottom,0px));display:grid;gap:10px}
+.ctot{display:flex;justify-content:space-between;align-items:baseline;font-weight:700;font-size:14px}
+.ctot b{font-size:20px;color:var(--red)}
+.cnote{font-size:12px;color:var(--soft);margin:0;line-height:1.5}
+.cempty{text-align:center;color:var(--soft);padding:56px 0;display:grid;gap:16px;justify-items:center}
+.cform{display:grid;gap:12px;padding:20px 0}
+.cform label{font-size:15px;font-weight:600;line-height:1.45}
+.cform input{height:52px;border:1px solid var(--line);border-radius:12px;padding:0 16px;font:500 17px Montserrat,sans-serif;letter-spacing:.04em;background:var(--bg);color:var(--ink);width:100%}
+.cform input:focus{outline:none;border-color:var(--ink)}
+.cform input[aria-invalid=true]{border-color:var(--red)}
+.cerr{color:var(--red);font-size:12.5px;margin:0;min-height:0}
+.cerr:empty{display:none}
+.csum{margin:0;font-size:14px;line-height:1.6}
+.csum b{color:var(--red)}
+@media(max-width:760px){.hr{gap:4px}.cartb{width:40px;height:40px;margin-right:-6px}
+ .cpan{top:auto;height:min(92svh,720px);width:100%;border-radius:16px 16px 0 0;transform:translateY(100%)}}
+.dcart{position:absolute;top:calc(env(safe-area-inset-top,0px) + 16px);right:68px;width:44px;height:44px;border:1px solid var(--line);background:var(--bg);z-index:3}
+@media(max-width:760px){.dcart{position:fixed;top:calc(6svh + 12px);right:64px}}
+@media(max-height:520px) and (orientation:landscape){.dcart{position:absolute;top:12px}}
+
+/* các bước mua hàng */
+.howh{margin-bottom:clamp(24px,3vw,40px)}.howh .k{margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--red)}.howh h2{margin:0;font-size:clamp(24px,3vw,36px);line-height:1.05}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px;counter-reset:st}
+.steps li{position:relative}
+.steps li:not(:last-child)::after{content:"";position:absolute;top:28px;left:72px;right:-14px;border-top:2px dashed var(--line)}
+.sic{position:relative;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:var(--paper);color:var(--ink);margin-bottom:16px}
+.sic b{position:absolute;top:-4px;right:-6px;width:24px;height:24px;border-radius:50%;background:var(--red);color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center;box-shadow:0 0 0 3px var(--bg)}
+.steps li:last-child .sic{background:var(--red);color:#fff}.steps li:last-child .sic b{background:var(--ink)}
+.steps h3{font-size:15px;margin:0 0 8px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.steps p{margin:0;color:var(--soft);font-size:14px;line-height:1.6}
+.steps li:last-child p{color:var(--ink)}
+@media(max-width:1000px){.steps{grid-template-columns:repeat(2,minmax(0,1fr));gap:32px 28px}.steps li:nth-child(2)::after{display:none}}
+@media(max-width:600px){.steps{grid-template-columns:1fr;gap:0}
+ .steps li{display:grid;grid-template-columns:56px 1fr;column-gap:16px;padding-bottom:24px}
+ .steps li .sic{grid-row:1/3;margin:0}.steps h3{align-self:end;margin:6px 0 4px}
+ .steps li:not(:last-child)::after,.steps li:nth-child(2)::after{display:block;top:62px;bottom:4px;left:27px;right:auto;border-top:0;border-left:2px dashed var(--line)}}
+.logo{font-weight:700;color:var(--ink);text-shadow:0 1px 0 rgba(0,0,0,.08)}
 </style>
 
 
@@ -415,7 +485,7 @@ body.fbv .fab{display:none}
 <header class="top g" id="top"><div class="bar w">
   <a class="contact" href="#lienhe">Zalo 0981 645 881</a>
   <a class="logo" href="/">LE NGOC MAI</a>
-  <div class="cd"><span>Kết thúc sau</span><b id="cdv">--</b></div>
+  <div class="hr"><div class="cd"><span>Kết thúc sau</span><b id="cdv">--</b></div><button class="cartb" id="cartb" type="button" aria-label="Giỏ hàng" title="Giỏ hàng"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8z"/><path d="M9 10V6.5a3 3 0 0 1 6 0V10"/></svg><i hidden>0</i></button></div>
 </div></header>
 
 <section class="home g" id="home"><div class="w">
@@ -450,14 +520,14 @@ body.fbv .fab{display:none}
   <svg class="bxm" viewBox="0 0 200 250" aria-hidden="true"><path d="M100 40L150 110H122L166 168H134L182 214H18L66 168H34L78 110H50z" fill="#1d6b45"/><rect x="90" y="214" width="20" height="24" fill="#6b3f22"/><path d="M100 10l5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z" fill="#f3d27a"/><circle cx="84" cy="100" r="5" fill="#ff4d5e"/><circle cx="120" cy="140" r="5" fill="#f3d27a"/><circle cx="70" cy="180" r="6" fill="#7fd3ff"/><circle cx="132" cy="190" r="6" fill="#ff4d5e"/></svg><div class="clock" id="clock"><div><b id="cD">0</b><small>NGÀY</small></div><div><b id="cH">00</b><small>GIỜ</small></div><div><b id="cM">00</b><small>PHÚT</small></div><div><b id="cS">00</b><small>GIÂY</small></div></div>
 </div></section>
 
-<section class="how g" id="lienhe"><div class="hw w">
-  <div><h3><span>●</span> Chọn mẫu</h3><p>Bấm vào sản phẩm để xem ảnh lớn và các size còn hàng.</p></div>
-  <div><h3><span>●</span> Nhắn Mai</h3><p>Bấm “Liên hệ” rồi chọn Zalo hoặc Messenger, link mẫu bạn xem được gửi kèm sẵn.</p></div>
-  <div><h3><span>●</span> Nhận hàng</h3><p>Mai xác nhận còn hàng, báo phí ship và giao tận nơi. Chuyển khoản hoặc COD.</p></div>
+<section class="how g" id="lienhe"><div class="w">
+  <div class="howh"><p class="k">MUA HÀNG TẠI LE NGOC MAI</p><h2 class="up">4 bước đặt hàng</h2></div>
+  <ol class="steps"><li><div class="sic"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3l-4 3 2 3 2-1v12h8V8l2 1 2-3-4-3c-.5 1.4-2 2.4-4 2.4S8.5 4.4 8 3z"/></svg><b>1</b></div><h3>Chọn mẫu &amp; size</h3><p>Bấm vào sản phẩm để xem ảnh lớn, chọn màu và size còn hàng.</p></li><li><div class="sic"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8z"/><path d="M9 10V6.5a3 3 0 0 1 6 0V10"/></svg><b>2</b></div><h3>Thêm vào giỏ</h3><p>Bấm “Thêm vào giỏ”. Biểu tượng giỏ hàng ở góc trên hiện số món và tạm tính.</p></li><li><div class="sic"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.2A8.5 8.5 0 1 1 21 12z"/><path d="M8.5 12h7M8.5 9h4"/></svg><b>3</b></div><h3>Gửi đơn cho Mai</h3><p>Mở giỏ, bấm “Gửi đơn cho Mai”, điền số điện thoại rồi gửi qua Zalo hoặc Messenger.</p></li><li><div class="sic"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg><b>4</b></div><h3>Nhận hàng</h3><p>Mai xác nhận còn hàng, báo giá kèm phí ship, chốt deal. Đơn hàng sẽ tới tay bạn sớm nhất có thể. Chuyển khoản hoặc COD.</p></li></ol>
 </div></section>
 <footer class="g"><div class="fw w"><p class="mark">LE NGOC MAI<span class="fxm">🎄 Giáng sinh an lành &amp; năm mới rực rỡ</span></p><div class="fmeta"><span>Zalo 0981 645 881</span><span>lengocmai.com</span><span>Shop phân phối lại, không phải trang chính thức của thương hiệu.</span><span class="fmus">Nhạc nền: "Jingle Bells" của Kevin MacLeod (incompetech.com), giấy phép CC BY 3.0.</span></div></div></footer>
 
 <div class="dlg" id="dlg" role="dialog" aria-modal="true" aria-label="Chi tiết sản phẩm"><div class="box" id="box"></div></div>
+<div class="cart" id="cart" role="dialog" aria-modal="true" aria-label="Giỏ hàng"><div class="cpan" id="cpan"></div></div>
 <div class="toast" id="toast"></div>
 <button class="mus idle" id="mus" type="button" aria-label="Bật nhạc Giáng sinh" title="Nhạc Giáng sinh"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 17.5V5.8l11-2.3v11.7"/><path d="M9 5.8l11-2.3V7L9 9.3z"/><circle cx="6.5" cy="17.5" r="2.8"/><circle cx="17.5" cy="15.2" r="2.8"/><path d="M8.2 17.5V6.2h1.6v11.3zM18.4 15.2V3.6h1.6v11.6z"/></svg><span class="eq"><i></i><i></i><i></i></span></button>
 <a class="fab" id="fab" href="/feedback" aria-label="Ảnh thực tế khách mặc"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="30" r="25" fill="#fff"/><circle cx="23.5" cy="25" r="3.2" fill="#1d2430"/><circle cx="40.5" cy="25" r="3.2" fill="#1d2430"/><circle cx="24.6" cy="23.9" r="1" fill="#fff"/><circle cx="41.6" cy="23.9" r="1" fill="#fff"/><path d="M32 30.5l13 3.6-13 2.2z" fill="#f08a24"/><circle cx="18" cy="33" r="3.4" fill="#ffb3b8" opacity=".7"/><circle cx="46" cy="33" r="3.4" fill="#ffb3b8" opacity=".7"/><g fill="#1d2430"><circle cx="25" cy="41" r="1.5"/><circle cx="28.4" cy="43.4" r="1.5"/><circle cx="32" cy="44.2" r="1.5"/><circle cx="35.6" cy="43.4" r="1.5"/><circle cx="39" cy="41" r="1.5"/></g><path d="M9 49c8 6 38 6 46 0l1 8c-9 6-39 6-48 0z" fill="#d0021b"/><path d="M15 51.6v7M23 53.2v7M31 53.8v7M39 53.6v7M47 52.4v7" stroke="#fff" stroke-width="2" opacity=".55"/><path d="M42 54l6 10h-7l-3-9z" fill="#d0021b"/></svg><b>Ảnh thực tế</b></a>
@@ -673,17 +743,17 @@ function openItem(id,push){
   const MS='<svg viewBox="0 0 48 48" width="28" height="28" aria-hidden="true"><defs><linearGradient id="mg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#0099FF"/><stop offset=".6" stop-color="#A033FF"/><stop offset="1" stop-color="#FF5280"/></linearGradient></defs><path d="M24 4C12.7 4 4 12.3 4 23.5c0 5.9 2.4 11 6.4 14.5v6l5.8-3.2c2.4.7 5 1.1 7.8 1.1 11.3 0 20-8.3 20-19.5S35.3 4 24 4z" fill="url(#mg)"/><path d="M12 29l7.4-11.7 5.9 4.4 6.2-4.4L36 18l-7.4 11.7-5.9-4.4-6.2 4.4z" fill="#fff"/></svg>';
   const ims=c.imgs.length?c.imgs:[fbOf(G.cat,0),fbOf(G.cat,1)];
   $("#box").innerHTML=`<div class="galw"><div class="gal" id="gal">${ims.map((u,k)=>`<img src="${esc(im(u,960))}" srcset="${esc(sset(u))}" sizes="(min-width:761px) 50vw,100vw" data-fb="${esc(fbOf(G.cat,k%2))}" alt="${k?"":esc(G.name)}" ${k?'loading="lazy"':""} decoding="async">`).join("")}</div><div class="dots" aria-hidden="true">${ims.map((_,k)=>`<i${k?"":' class="on"'}></i>`).join("")}</div></div>
-  <div class="info"><button class="x" id="x" aria-label="Đóng"><svg width="16" height="16" viewBox="0 0 16 16" stroke="currentColor" stroke-width="1.2"><path d="M2 2l12 12M14 2L2 14"/></svg></button>
+  <div class="info"><button class="x" id="x" aria-label="Đóng"><svg width="16" height="16" viewBox="0 0 16 16" stroke="currentColor" stroke-width="1.2"><path d="M2 2l12 12M14 2L2 14"/></svg></button><button class="cartb dcart" type="button" aria-label="Giỏ hàng" title="Giỏ hàng"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8z"/><path d="M9 10V6.5a3 3 0 0 1 6 0V10"/></svg><i hidden>0</i></button>
     <div class="brand">${esc(G.brand.toUpperCase())} · ${esc(G.cat)}</div><h2 class="serif">${esc(G.name)}</h2>
     <div class="price">${priceH(G.brand,c.now,c.was,c.pct,1)}</div>
     ${colorsH(G,c)}
     ${c.so?`<div class="sold">HẾT HÀNG ONLINE</div>`:""}
     ${c.sizes.length?`<div><div class="lbl">SIZE <span class="lh">(gạch ngang là đã hết)</span></div><div class="sizes">${c.sizes.map(s=>s.a?`<button data-s="${esc(s.l)}" aria-pressed="${s.l==pick}">${esc(s.l)}</button>`:`<button class="na" disabled aria-label="${esc(s.l)} hết hàng">${esc(s.l)}</button>`).join("")}</div>${sizeGuide(G.brand,c)}</div>`:`<div><div class="lbl">SIZE</div><div class="sizes"><button aria-pressed="${!c.so}"${c.so?' class="na" disabled':""}>One size</button></div></div>`}
-    <div class="row2 acts"><button class="btn main" id="contact" aria-expanded="false"><span>LIÊN HỆ</span></button><button class="btn ghost" id="copy"><span>COPY LINK MẪU</span></button></div>
+    <div class="row2 acts"><button class="btn main" id="addc"${c.so?" disabled":""}><span>${c.so?"HẾT HÀNG":"THÊM VÀO GIỎ"}</span></button><button class="btn ghost" id="contact" aria-expanded="false"><span>LIÊN HỆ</span></button></div>
     <div class="pick" id="pick" hidden><div class="lbl" style="margin:0">NHẮN MAI QUA</div>
       <div class="row2"><button class="opt" id="zalo">${ZL}<span>Zalo</span></button><a class="opt" id="mess" href="#">${MS}<span>Messenger</span></a></div></div>
-    <p class="fine">Hàng chính hãng ${esc(G.brand)}. Mai xác nhận còn hàng trước khi chốt đơn.</p></div>`;
-  updMess();if(!keep)$("#box").scrollTop=0;const g=$("#gal");g.addEventListener("scroll",()=>{const k=Math.round(g.scrollLeft/(g.firstElementChild.offsetWidth||1));g.parentNode.querySelectorAll(".dots i").forEach((d,n)=>d.classList.toggle("on",n==k))},{passive:true});$("#dlg").classList.add("open");document.body.style.overflow="hidden";
+    <p class="fine">Hàng chính hãng ${esc(G.brand)}. Mai xác nhận còn hàng trước khi chốt đơn. <button class="lnk" id="copy" type="button">Copy link mẫu</button></p></div>`;
+  updMess();cbadge();if(!keep)$("#box").scrollTop=0;const g=$("#gal");g.addEventListener("scroll",()=>{const k=Math.round(g.scrollLeft/(g.firstElementChild.offsetWidth||1));g.parentNode.querySelectorAll(".dots i").forEach((d,n)=>d.classList.toggle("on",n==k))},{passive:true});$("#dlg").classList.add("open");document.body.style.overflow="hidden";
   showView(G.brand);const P="/sp/"+encodeURIComponent(c.id);if(push&&location.pathname!=P){if(keep)history.replaceState(null,"",P);else history.pushState(null,"",P)}
 }
 function updMess(){const a=$("#mess");if(a&&cur)a.href=`https://m.me/${CONFIG.messenger}?text=${encodeURIComponent(msg(cur))}`}
@@ -691,6 +761,64 @@ function close(){$("#dlg").classList.remove("open");document.body.style.overflow
 let tt;function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>e.classList.remove("on"),2600)}
 async function copy(t){try{await navigator.clipboard.writeText(t);return true}catch(e){return false}}
 
+/* ===== Giỏ hàng (chế độ khách: lưu trên trình duyệt, không cần tài khoản) ===== */
+const CK="lnm_cart",PK="lnm_phone";
+const lsGet=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+let CART=lsGet(CK,[]);if(!Array.isArray(CART))CART=[];let cstep="list",cphone="";
+const CZL='<svg viewBox="0 0 48 48" width="28" height="28" aria-hidden="true"><rect width="48" height="48" rx="12" fill="#0068FF"/><text x="24" y="30" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="14" fill="#fff">Zalo</text></svg>';
+const CMS='<svg viewBox="0 0 48 48" width="28" height="28" aria-hidden="true"><defs><linearGradient id="mg3" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#0099FF"/><stop offset=".6" stop-color="#A033FF"/><stop offset="1" stop-color="#FF5280"/></linearGradient></defs><path d="M24 4C12.7 4 4 12.3 4 23.5c0 5.9 2.4 11 6.4 14.5v6l5.8-3.2c2.4.7 5 1.1 7.8 1.1 11.3 0 20-8.3 20-19.5S35.3 4 24 4z" fill="url(#mg3)"/><path d="M12 29l7.4-11.7 5.9 4.4 6.2-4.4L36 18l-7.4 11.7-5.9-4.4-6.2 4.4z" fill="#fff"/></svg>';
+function csave(){lsSet(CK,CART);cbadge()}
+function cbadge(){const n=CART.reduce((a,x)=>a+x.q,0);document.querySelectorAll(".cartb").forEach(b=>{const i=b.querySelector("i");i.textContent=n>99?"99+":n;i.hidden=!n;b.setAttribute("aria-label",n?`Giỏ hàng: ${n} sản phẩm`:"Giỏ hàng")})}
+function cline(x){const [G,c]=findColor(x.id);return G&&c?{...x,n:G.name,b:G.brand,col:c.col,p:c.now,img:c.imgs[0]||x.img,so:c.so}:x}
+function ctot(L){let t=0,ask=0;for(const x of L){if(noP(x.b))ask+=x.q;else t+=x.p*x.q}return{t,ask}}
+const fmtPh=d=>String(d).replace(/^(\d{4})(\d{3})(\d{3})$/,"$1 $2 $3");
+/* số di động VN: 10 số bắt đầu bằng 0, hoặc 9 số khi bỏ số 0 đầu (nhận cả +84) */
+function vnPhone(v){let d=String(v||"").replace(/[\s.\-()]/g,"");if(/^\+?84\d{9}$/.test(d))d="0"+d.replace(/^\+?84/,"");if(!/^\d+$/.test(d))return null;
+  if(d.length==9&&d[0]!="0")d="0"+d;else if(!(d.length==10&&d[0]=="0"))return null;
+  return /^0(3[2-9]|5[25689]|7[06-9]|8[1-9]|9\d)\d{7}$/.test(d)?d:null}
+function ctext(L,ph){const n=L.reduce((a,x)=>a+x.q,0),{t,ask}=ctot(L);
+  return `Chào Mai, mình muốn đặt ${n} sản phẩm:\n`+L.map((x,k)=>`${k+1}. ${x.n} (${x.b})${x.col?" · Màu "+x.col:""} · Size ${x.s} · SL ${x.q} · ${noP(x.b)?"chờ báo giá":vnd(x.p*x.q)}\n${plink(x)}`).join("\n")+
+    `\nTạm tính: ${vnd(t)}${ask?" (chưa gồm mẫu chờ báo giá)":""}\nSĐT của mình: ${ph}`}
+function addCart(){if(!cur)return;const c=cur;if(c.so){toast("Màu này đã hết hàng online");return}
+  const sz=c.sizes.length?pick:"One size";
+  if(!sz){toast("Bạn chọn size trước nhé");const z=$("#box .sizes");if(z){z.classList.remove("need");void z.offsetWidth;z.classList.add("need")}return}
+  const f=CART.find(x=>x.id==c.id&&x.s==sz);if(f)f.q=Math.min(f.q+1,20);else CART.push({id:c.id,s:sz,q:1,n:c.name,b:c.brand,col:c.col,p:c.now,img:c.imgs[0]||""});
+  csave();document.querySelectorAll(".cartb").forEach(b=>{b.classList.remove("bump");void b.offsetWidth;b.classList.add("bump")});toast(`Đã thêm vào giỏ: ${c.name} · size ${sz}`)}
+function renderCart(){const P=$("#cpan");if(!P)return;const L=CART.map(cline),n=L.reduce((a,x)=>a+x.q,0),{t,ask}=ctot(L);
+  if(!L.length)cstep="list";
+  const hd=`<div class="chd"><h3>${cstep=="list"?`Giỏ hàng${n?` (${n})`:""}`:"Gửi đơn cho Mai"}</h3><button class="cx" id="cx" type="button" aria-label="Đóng giỏ hàng"><svg width="14" height="14" viewBox="0 0 16 16" stroke="currentColor" stroke-width="1.4"><path d="M2 2l12 12M14 2L2 14"/></svg></button></div>`;
+  let body,ft="";
+  if(!L.length)body=`<div class="cempty"><p style="margin:0">Giỏ hàng đang trống.</p><button class="btn ghost" id="cshop" type="button" style="min-width:220px">XEM MẪU ĐANG SALE</button></div>`;
+  else if(cstep=="list"){body=L.map((x,k)=>`<div class="cl"><a href="/sp/${encodeURIComponent(x.id)}" data-cgo aria-label="Xem ${esc(x.n)}"><img src="${esc(im(x.img,200))}" alt="" loading="lazy"></a><div><b>${esc(x.n)}</b><small>${esc(x.b)}${x.col?" · "+esc(x.col):""} · Size ${esc(x.s)}</small>${x.so?`<small class="cso">Màu này vừa hết hàng online, Mai sẽ báo lại</small>`:""}<div class="cp">${noP(x.b)?"Liên hệ báo giá":vnd(x.p*x.q)}</div><div class="qty"><button type="button" data-q="${k}" data-d="-1" aria-label="Bớt 1">−</button><span>${x.q}</span><button type="button" data-q="${k}" data-d="1" aria-label="Thêm 1">+</button></div></div><button class="crm" type="button" data-rm="${k}">Xoá</button></div>`).join("");
+    ft=`<div class="ctot"><span>Tạm tính</span><b>${vnd(t)}</b></div>${ask?`<p class="cnote">Chưa gồm ${ask} sản phẩm chờ Mai báo giá.</p>`:""}<button class="btn main" id="csend" type="button">GỬI ĐƠN CHO MAI</button><p class="cnote">Giỏ hàng chỉ lưu trên trình duyệt này. Đổi máy hoặc mở trình duyệt khác sẽ không thấy giỏ cũ.</p>`}
+  else if(cstep=="phone")body=`<form class="cform" id="cform" novalidate><label for="cph">Điền số điện thoại của bạn để tiện cho việc chăm sóc khách hàng</label><input id="cph" type="tel" inputmode="tel" autocomplete="tel" placeholder="VD: 0981 234 567" maxlength="16" value="${esc(cphone||lsGet(PK,""))}"><p class="cerr" id="cerr" role="alert"></p><button class="btn main" type="submit">TIẾP TỤC</button><p class="cnote">Số điện thoại chỉ gửi kèm đơn cho Mai để tư vấn và giữ hàng, không chia sẻ cho ai khác.</p><button class="lnk" type="button" id="cbackl">‹ Quay lại giỏ hàng</button></form>`;
+  else body=`<div class="cform"><p class="csum">${n} sản phẩm · Tạm tính <b>${vnd(t)}</b>${ask?" (chưa gồm mẫu chờ báo giá)":""}<br>SĐT: ${esc(fmtPh(cphone))}</p><div class="lbl" style="margin:0">GỬI ĐƠN QUA</div><div class="row2"><button class="opt" id="czalo" type="button">${CZL}<span>Zalo</span></button><a class="opt" id="cmess" href="https://m.me/${CONFIG.messenger}?text=${encodeURIComponent(ctext(L,fmtPh(cphone)))}" target="_blank" rel="noopener">${CMS}<span>Messenger</span></a></div><p class="cnote">Chọn Zalo: đơn hàng được copy sẵn, bạn chỉ cần dán vào khung chat với Mai rồi gửi.</p><button class="lnk" type="button" id="cbackp">‹ Sửa số điện thoại</button></div>`;
+  P.innerHTML=hd+`<div class="cbody">${body}</div>`+(ft?`<div class="cft">${ft}</div>`:"")}
+function openCart(){cstep="list";renderCart();$("#cart").classList.add("open");document.body.style.overflow="hidden"}
+function closeCart(){$("#cart").classList.remove("open");document.body.style.overflow=$("#dlg").classList.contains("open")?"hidden":""}
+document.addEventListener("click",async e=>{const t=e.target,stop=()=>e.stopPropagation();
+  if(t.closest(".cartb")){stop();openCart();return}
+  if(t.closest("#addc")){stop();addCart();return}
+  if(!t.closest("#cart"))return;
+  if(t.closest("[data-cgo]")){closeCart();return}
+  stop();
+  if(t.closest("#cx")||t.id=="cart"){closeCart();return}
+  if(t.closest("#cshop")){closeCart();go("/");return}
+  const q=t.closest("[data-q]");if(q){const x=CART[+q.dataset.q];if(x){x.q=Math.max(1,Math.min(20,x.q+ +q.dataset.d));csave();renderCart()}return}
+  const r=t.closest("[data-rm]");if(r){CART.splice(+r.dataset.rm,1);csave();renderCart();return}
+  if(t.closest("#csend")){cstep="phone";renderCart();const i=$("#cph");if(i&&matchMedia("(hover:hover)").matches)i.focus();return}
+  if(t.closest("#cbackl")){cstep="list";renderCart();return}
+  if(t.closest("#cbackp")){cstep="phone";renderCart();return}
+  if(t.closest("#czalo")){const ok=await copy(ctext(CART.map(cline),fmtPh(cphone)));toast(ok?"Đã copy đơn hàng, dán vào Zalo gửi Mai nhé":"Mở Zalo: "+CONFIG.zalo);setTimeout(()=>{location.href="https://zalo.me/"+CONFIG.zalo},ok?900:0);return}
+},true);
+document.addEventListener("submit",e=>{if(e.target.id!="cform")return;e.preventDefault();const i=$("#cph"),v=i.value.trim(),d=vnPhone(v);
+  if(!d){i.setAttribute("aria-invalid","true");$("#cerr").textContent=v?"Số chưa đúng. Nhập số di động Việt Nam: 10 số bắt đầu bằng 0 (VD 0981 234 567), hoặc 9 số nếu bỏ số 0 đầu.":"Bạn điền số điện thoại nhé.";i.focus();return}
+  cphone=d;lsSet(PK,d);cstep="send";renderCart()});
+document.addEventListener("input",e=>{if(e.target.id=="cph"){e.target.removeAttribute("aria-invalid");const c=$("#cerr");if(c)c.textContent=""}});
+addEventListener("keydown",e=>{if(e.key=="Escape"&&$("#cart").classList.contains("open")){e.stopImmediatePropagation();closeCart()}},true);
+addEventListener("storage",e=>{if(e.key==CK){CART=lsGet(CK,[]);if(!Array.isArray(CART))CART=[];cbadge();if($("#cart").classList.contains("open"))renderCart()}});
+cbadge();
 document.addEventListener("click",async e=>{
   if(e.target.closest("#back")){e.preventDefault();go("/");return}
   const ia=e.target.closest('a[href^="/"]');if(ia&&!e.metaKey&&!e.ctrlKey&&!e.shiftKey){e.preventDefault();go(ia.getAttribute("href"));return}
