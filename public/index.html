@@ -913,7 +913,7 @@ tick();setInterval(tick,1000);
 /* popup ưu đãi -50.000đ: hiện một lần cho mỗi khách */
 (function(){let seen=false;try{seen=localStorage.getItem("lnm_promo")=="1"}catch(e){}if(seen||/^\/feedback/.test(location.pathname))return;
   setTimeout(()=>{const d=document.createElement("div");d.className="promo";d.setAttribute("role","dialog");d.setAttribute("aria-modal","true");d.setAttribute("aria-label","Ưu đãi đặt qua web");
-    d.innerHTML=`<div class="pbox"><button class="px" type="button" aria-label="Đóng">×</button><p class="pt">🎁 ƯU ĐÃI ĐẶT QUA WEB</p><p class="pm"><b>lengocmai.com</b> đang có chương trình <b>-50.000 VND</b> với mỗi sản phẩm đặt thông qua Web.</p><p class="ps">Thêm mẫu vào giỏ hàng rồi gửi đơn cho Mai là được giảm ngay.</p><button class="pgo" type="button">XEM MẪU NGAY</button></div>`;
+    d.innerHTML=`<div class="pbox"><button class="px" type="button" aria-label="Đóng">×</button><p class="pt">🎁 ƯU ĐÃI ĐẶT QUA WEB</p><p class="pm">Đang có chương trình giảm giá <b>50.000 VND</b> với mỗi sản phẩm đặt thông qua Web <b>lengocmai.com</b></p><p class="ps">Thêm mẫu vào giỏ hàng rồi gửi đơn cho Mai là được giảm ngay.</p><button class="pgo" type="button">XEM MẪU NGAY</button></div>`;
     const close=()=>{d.remove();document.removeEventListener("keydown",esc_);try{localStorage.setItem("lnm_promo","1")}catch(e){}},esc_=e=>{if(e.key=="Escape")close()};
     d.addEventListener("click",e=>{if(e.target==d||e.target.closest(".px,.pgo"))close()});document.addEventListener("keydown",esc_);document.body.appendChild(d)},900)})();
 const topEl=$("#top"),pimgs=[...document.querySelectorAll("[data-p]")],still=matchMedia("(prefers-reduced-motion: reduce)").matches;let raf=0;
