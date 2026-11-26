@@ -659,17 +659,17 @@ const ex=u=>!u?"":u[0]=="~"?CDN+u.slice(1):u.startsWith("//")?"https:"+u:u;
 const im=(u,w)=>isCdn(u)?u+"?width="+w:u;
 const sset=u=>isCdn(u)?[360,540,720,960].map(w=>`${u}?width=${w} ${w}w`).join(","):"";
 const fbOf=(cat,k)=>art(CTYPE[cat]||"top","#bfae9c",k);
-function colorOf(x){return {id:x.id,col:x.col||"",so:!!x.so,cg:x.cg||"",now:x.p,was:x.w,pct:x.w>x.p?Math.round((1-x.p/x.w)*100):0,
+function colorOf(x){return {id:x.id,col:x.col||"",so:!!x.so,bs:!!x.bs,cg:x.cg||"",now:x.p,was:x.w,pct:x.w>x.p?Math.round((1-x.p/x.w)*100):0,
   sizes:(x.s||[]).map(s=>Array.isArray(s)?{l:s[0],a:!!s[1]}:{l:String(s),a:true}),imgs:(x.i||[]).map(ex).filter(Boolean),r:x.r??9999,t:x.t||0}}
 function groupItems(arr){const m=new Map();for(const x of arr){const k=x.g||x.id;if(!m.has(k))m.set(k,{id:x.id,g:k,name:x.n,brand:x.b,cat:x.c,colors:[]});const G=m.get(k);if(!G.colors.some(c=>c.id==x.id))G.colors.push(colorOf(x))}
   return [...m.values()].map(G=>{if(G.colors.some(c=>c.cg)){const o={Core:0,Limited:1};G.colors.sort((a,b)=>(o[a.cg]??0)-(o[b.cg]??0))}
     const fa=G.colors.findIndex(c=>!c.so);if(fa>0)G.colors.unshift(...G.colors.splice(fa,1));
-    G.so=G.colors.every(c=>c.so);const c=G.colors[0];G.r=Math.min(...G.colors.map(c=>c.r));G.t=Math.max(...G.colors.map(c=>c.t));G.now=c.now;G.was=c.was;G.pct=c.pct;
+    G.so=G.colors.every(c=>c.so);G.bs=G.colors.some(c=>c.bs);const c=G.colors[0];G.r=Math.min(...G.colors.map(c=>c.r));G.t=Math.max(...G.colors.map(c=>c.t));G.now=c.now;G.was=c.was;G.pct=c.pct;
     G.find=(G.name+" "+G.colors.map(c=>c.col).join(" ")).toLowerCase();return G})}
 const fromSample=i=>({id:i.id,g:i.id,name:i.name,brand:i.brand,cat:i.cat,now:i.now,was:i.was,pct:i.pct,r:9999,t:0,find:i.name.toLowerCase(),
   colors:[{id:i.id,col:"",now:i.now,was:i.was,pct:i.pct,sizes:i.sizes.map(l=>({l,a:true})),imgs:[i.img1,i.img2]}]});
 const gimg=(G,k)=>{const c=G.colors[0];return c.imgs[k]||c.imgs[0]||fbOf(G.cat,k)};
-let DCATS={};
+let DCATS={};const BS="Best Seller";const inCat=(i,c)=>c=="Tất cả"||(c==BS?i.bs:i.cat==c);
 let items=(CONFIG.githubRepo||CONFIG.dataUrl)?[]:SAMPLE.map(norm).map(fromSample),brand=null,cat="Tất cả",pick=null,cur=null,sort="hot",q="",shown=0,list=[],live=false;
 const SORTS={hot:["Nổi bật",(a,b)=>(a.r??9999)-(b.r??9999)||(b.t||0)-(a.t||0)],off:["Giảm nhiều nhất",(a,b)=>b.pct-a.pct||a.now-b.now],asc:["Giá thấp → cao",(a,b)=>a.now-b.now],desc:["Giá cao → thấp",(a,b)=>b.now-a.now],new:["Mới nhất",(a,b)=>(b.t||0)-(a.t||0)]};
 const bslug=b=>slug(b),lcls=b=>b=="Alo Yoga"?" alo":"";
@@ -686,8 +686,8 @@ function renderHome(){
   $("#ann").innerHTML=[...a,...a,...a,...a].map(t=>`<span>${esc(t)}</span>`).join("");
 }
 function renderFilters(){
-  const its=items.filter(i=>i.brand==brand),n=c=>c=="Tất cả"?its.length:its.filter(i=>i.cat==c).length;
-  const bc=DCATS[brand]||CATS,cs=["Tất cả",...bc.filter(c=>its.some(i=>i.cat==c)),...[...new Set(its.map(i=>i.cat))].filter(c=>!bc.includes(c))],P=(a,b)=>`aria-pressed="${a==b}"`;
+  const its=items.filter(i=>i.brand==brand),n=c=>its.filter(i=>inCat(i,c)).length;
+  const bc=DCATS[brand]||CATS,cs=["Tất cả",...(its.some(i=>i.bs)?[BS]:[]),...bc.filter(c=>c!=BS&&its.some(i=>i.cat==c)),...[...new Set(its.map(i=>i.cat))].filter(c=>!bc.includes(c))],P=(a,b)=>`aria-pressed="${a==b}"`;
   const chips=cs.map(c=>`<button class="chip" ${P(c,cat)} data-c="${esc(c)}">${esc(c)}</button>`).join("");
   const sel=`<select class="sel js-sort" aria-label="Sắp xếp">${Object.entries(SORTS).map(([k,[t]])=>`<option value="${k}"${k==sort?" selected":""}>${esc(t)}</option>`).join("")}</select>`;
   const srch=`<input class="srch js-q" type="search" placeholder="Tìm mẫu…" value="${esc(q)}" aria-label="Tìm tên mẫu" enterkeyhint="search">`;
@@ -717,7 +717,7 @@ function card(i,k){const c=i.colors[0],a=gimg(i,0),b=c.imgs[1]||a,n=i.colors.len
     ${av.length?`<div class="sz">Size ${esc(av.join(" · "))}</div>`:""}</div></article>`}
 function renderGrid(){
   const qq=q.trim().toLowerCase();
-  list=items.filter(i=>i.brand==brand&&(cat=="Tất cả"||i.cat==cat)&&(!qq||i.find.includes(qq))).sort(SORTS[sort][1]);
+  list=items.filter(i=>i.brand==brand&&inCat(i,cat)&&(!qq||i.find.includes(qq))).sort(SORTS[sort][1]);
   const ct=list.length.toLocaleString("vi-VN");document.querySelectorAll(".js-count").forEach(e=>e.textContent=ct+" mẫu");$(".js-count2").textContent=`Xem ${ct} mẫu`;syncUI();shown=0;$("#grid").innerHTML="";
   if(!list.length){$("#grid").innerHTML=`<p class="empty">Chưa có mẫu phù hợp. Thử chọn loại khác hoặc xoá ô tìm kiếm nhé.</p>`;$("#more").hidden=true;return}
   more();
