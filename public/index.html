@@ -288,21 +288,53 @@ footer{border-top:1px solid var(--line);padding-block:40px calc(32px + env(safe-
 .sizes button.na{color:var(--strike);text-decoration:line-through;background:var(--paper);cursor:not-allowed;border-color:var(--line)}
 .tile.sk{background:linear-gradient(110deg,#1b1b1b 30%,#2a2a2a 50%,#1b1b1b 70%);background-size:200% 100%;animation:rise 1s var(--ease) forwards,shim 1.4s linear infinite}
 @keyframes shim{to{background-position:-200% 0}}
+/* ===== Giáng sinh: tuyết rơi nhẹ, dây đèn dưới header, điểm xanh thông + vàng ===== */
+:root{--pine:#0e5a3a;--gold:#c9a24a}
+.snow{position:fixed;inset:0;pointer-events:none;z-index:25;overflow:hidden}
+.snow i{position:absolute;top:-12px;width:var(--s,6px);height:var(--s,6px);border-radius:50%;background:#fff;box-shadow:0 0 3px rgba(0,0,0,.18);opacity:.9;animation:fall var(--d,12s) linear var(--w,0s) infinite;will-change:transform}
+@keyframes fall{to{transform:translate3d(var(--x,30px),105vh,0)}}
+@media(prefers-reduced-motion:reduce){.snow{display:none}}
+.top::after{content:"";position:absolute;left:0;right:0;bottom:-9px;height:12px;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='12' viewBox='0 0 96 12'%3E%3Cpath d='M0 2Q24 8 48 2T96 2' fill='none' stroke='%230e5a3a' stroke-width='1.2'/%3E%3Ccircle cx='12' cy='7' r='2.6' fill='%23d0021b'/%3E%3Ccircle cx='36' cy='7' r='2.6' fill='%23c9a24a'/%3E%3Ccircle cx='60' cy='7' r='2.6' fill='%230e5a3a'/%3E%3Ccircle cx='84' cy='7' r='2.6' fill='%23d0021b'/%3E%3C/svg%3E") repeat-x;background-size:96px 12px}
+.logo{position:relative}.logo::after{content:"";position:absolute;right:-.2em;top:-.5em;width:.62em;height:.62em;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1l2.6 7.4H22l-6 4.6 2.3 7.4L12 16l-6.3 4.4L8 13 2 8.4h7.4z' fill='%23c9a24a'/%3E%3C/svg%3E") center/contain no-repeat}
+.xmas{display:inline-flex;align-items:center;gap:6px;color:var(--pine)}
+.band{position:relative;overflow:hidden}
+.ann{background:linear-gradient(90deg,var(--red),#b0011a 50%,var(--red))}
+/* nút Feedback tròn */
+.fab{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:45;width:62px;height:62px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;box-shadow:0 8px 24px rgba(208,2,27,.35),0 0 0 3px #fff;text-decoration:none;transition:transform .25s var(--ease),bottom .3s var(--ease)}
+.fab:hover{transform:scale(1.06)}.fab svg{width:26px;height:26px}
+.fab b{position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);background:var(--pine);color:#fff;font-size:9px;font-weight:700;letter-spacing:.08em;padding:2px 7px;border-radius:99px;white-space:nowrap}
+.fab::before{content:"";position:absolute;top:-9px;right:-3px;width:26px;height:22px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 22'%3E%3Cpath d='M3 18C5 8 12 2 20 4l3 9-4 1C17 9 12 9 8 18z' fill='%23d0021b' stroke='%23fff' stroke-width='1.2'/%3E%3Crect x='1' y='16' width='16' height='5' rx='2.5' fill='%23fff'/%3E%3Ccircle cx='22.5' cy='13.5' r='3' fill='%23fff'/%3E%3C/svg%3E") center/contain no-repeat}
+body.fbv .fab{display:none}
+@media(max-width:1100px){body.inb .fab{bottom:calc(84px + env(safe-area-inset-bottom,0px))}}
+@media(max-width:760px){.fab{width:54px;height:54px}.fab svg{width:22px;height:22px}}
+/* trang feedback */
+.fview{padding-block:clamp(28px,4vw,56px) 96px}
+.fvh{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:16px;margin-bottom:28px}
+.fvh h1{margin:4px 0 0;font-size:clamp(28px,4.4vw,54px);line-height:1}.fvh p{margin:0;color:var(--soft);max-width:440px;font-size:14px}
+.fgrid{columns:4 240px;column-gap:14px}
+.fcard{break-inside:avoid;margin:0 0 14px;background:var(--paper);position:relative;overflow:hidden}
+.fcard img{display:block;width:100%;height:auto}
+.fcard .fl{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;font-size:12px;font-weight:600;letter-spacing:.04em;text-decoration:none;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-top:0}
+.fcard .fl span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fcard .fl em{font-style:normal;color:var(--red);white-space:nowrap}
+.fcard p{margin:0;padding:8px 12px 10px;font-size:13px;color:var(--soft);background:var(--bg);border:1px solid var(--line);border-top:0}
+.fempty{padding:60px 0;text-align:center;color:var(--soft)}
+@media(max-width:760px){.fgrid{columns:2;column-gap:8px}.fcard{margin-bottom:8px}.fcard .fl{padding:8px;font-size:11px}}
 .card{content-visibility:auto;contain-intrinsic-size:auto 520px}
 @media(max-width:760px){.sw{width:16px;height:16px}.cols button{width:50px}}
 </style>
 
 
 
+<div class="snow" id="snow" aria-hidden="true"></div>
 <div class="ann" aria-hidden="true"><div class="track" id="ann"></div></div>
 <header class="top g" id="top"><div class="bar w">
   <a class="contact" href="#lienhe">Zalo 0981 645 881</a>
-  <a class="logo" href="#">LE NGOC MAI</a>
+  <a class="logo" href="/">LE NGOC MAI</a>
   <div class="cd"><span>Kết thúc sau</span><b id="cdv">--</b></div>
 </div></header>
 
 <section class="home g" id="home"><div class="w">
-  <div class="htitle"><div><p class="k">BLACK FRIDAY · BEST SELLER</p><h1 class="up">Chọn thương hiệu</h1></div><p class="hsub">Hàng chính hãng, Mai order tận tay. Bấm vào thương hiệu để xem các mẫu đang sale.</p></div>
+  <div class="htitle"><div><p class="k">GIÁNG SINH · BLACK FRIDAY · BEST SELLER</p><h1 class="up">Chọn thương hiệu</h1></div><p class="hsub">Hàng chính hãng, Mai order tận tay. Bấm vào thương hiệu để xem các mẫu đang sale.</p></div>
   <div class="tiles" id="tiles"></div>
 </div></section>
 
@@ -318,6 +350,12 @@ footer{border-top:1px solid var(--line);padding-block:40px calc(32px + env(safe-
   <div class="mbar" id="mbar"><button class="mfil" id="fopen"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 4h14M5 9h8M7.5 14h3"/></svg><span>Lọc &amp; sắp xếp</span><i id="fbadge" hidden></i></button><a class="mzalo" id="mzalo" href="#">Nhắn Zalo</a></div>
   <div class="sheet" id="sheet" aria-hidden="true"><div class="sbox" role="dialog" aria-label="Lọc và sắp xếp"><div class="sgrab"></div><div class="shd"><b>Lọc &amp; sắp xếp</b><button class="sx" id="fclose" aria-label="Đóng"><svg width="14" height="14" viewBox="0 0 16 16" stroke="currentColor" stroke-width="1.4"><path d="M2 2l12 12M14 2L2 14"/></svg></button></div><div class="sbody" id="sbody"></div><div class="sft"><button class="btn ghost" id="freset"><span>Đặt lại</span></button><button class="btn main" id="fdone"><span class="js-count2">Xem mẫu</span></button></div></div></div>
 </section>
+
+<section class="fview g" id="fview" hidden><div class="w">
+  <a class="back" href="/" id="fback"><svg width="18" height="10" viewBox="0 0 18 10" fill="none" stroke="currentColor"><path d="M18 5H1M5 1L1 5l4 4"/></svg><span>Về trang chủ</span></a>
+  <div class="fvh"><div><p class="k xmas" style="font-size:13px;font-weight:700;letter-spacing:.1em;margin:18px 0 0">❄ FEEDBACK KHÁCH HÀNG</p><h1 class="up">Khách mặc thật</h1></div><p>Hình khách gửi Mai sau khi nhận hàng. Thấy mẫu nào đẹp, bấm vào hình để xem ngay mẫu đó.</p></div>
+  <div class="fgrid" id="fgrid"></div>
+</div></section>
 
 <div class="band-red" aria-hidden="true"><div class="track" id="track"></div></div>
 
@@ -335,11 +373,13 @@ footer{border-top:1px solid var(--line);padding-block:40px calc(32px + env(safe-
 
 <div class="dlg" id="dlg" role="dialog" aria-modal="true" aria-label="Chi tiết sản phẩm"><div class="box" id="box"></div></div>
 <div class="toast" id="toast"></div>
+<a class="fab" id="fab" href="/feedback" aria-label="Xem feedback khách hàng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h1.3l1.4-2h5.6l1.4 2h1.3A2.5 2.5 0 0 1 20 7.5v9a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5z"/><circle cx="12" cy="12" r="3.6"/></svg><b>FEEDBACK</b></a>
 
 <script>
 {
 /* ===== CẤU HÌNH: sửa ở đây ===== */
 const CONFIG={
+  feedbackCsv:"https://docs.google.com/spreadsheets/d/e/2PACX-1vSSms356KKRux1jaDpxKgoK3EvOZ-gcD-uZ5xT1L2RfNz3wtbYuzAxzuUz55vvM3ENF5kDKR-UlpZAr/pub?gid=1105504292&single=true&output=csv", // Google Sheet feedback (tab Sheet1 đã xuất bản CSV; Mai đăng qua Google Form)
   zalo:"0981645881",                 // số Zalo của Mai
   messenger:"lengocmai1997",         // tên trang/tài khoản trên m.me
   sheetCsv:"",                       // link CSV tab sản phẩm (File > Chia sẻ > Xuất bản lên web > CSV)
@@ -362,36 +402,36 @@ const LOGOS={"Lioness": "<svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/200
 const CATS=["Top","Pants","Skirts","Shorts","Dress","Jumpsuit","Jacket","Outerwear","Swim","Shoes","Accessories"];
 const CTYPE={Top:"top",Pants:"legging",Skirts:"skirt",Shorts:"shorts",Dress:"dress",Jacket:"top",Outerwear:"top",Jumpsuit:"legging",Shoes:"top",Swim:"top",Accessories:"top"};
 const SAMPLE=[
-["CRUSH MINI DRESS - VINYL", "Lioness", "Dress", 79, 47.4, "AUD", "XS,S,M,L,XL", "img/b01a.jpg", "img/b01b.jpg"],
-["ROSELLA BANDAGE MINI DRESS - RED", "I.AM.GIA", "Dress", 119, 59.5, "AUD", "XXS,XS,S,M,L,XL", "img/b11a.jpg", "img/b11b.jpg"],
-["Sherpa Edge Bomber - Deep Gravel", "Alo Yoga", "Jacket", 7876700, 5493000, "VND", "XXS,XS,S,M,L", "img/b21a.jpg", "img/b21b.jpg"],
-["SILHOUETTE MINI DRESS - VANILLA", "Lioness", "Dress", 69, 41.4, "AUD", "XS,S,M,L,XL,XXL", "img/b02a.jpg", "img/b02b.jpg"],
-["ROSELLA BANDAGE TOP - BABY PINK", "I.AM.GIA", "Top", 99, 49.5, "AUD", "XXS,XS,S,M,L,XL", "img/b12a.jpg", "img/b12b.jpg"],
-["Airbrush Heart Throb Bra - Black/White", "Alo Yoga", "Top", 3040200, 2107400, "VND", "XXS,XS,S,M,L", "img/b22a.jpg", "img/b22b.jpg"],
-["ANGELIC MINI DRESS - DESERT PYTHON", "Lioness", "Dress", 79, 47.4, "AUD", "XS,S,M,L", "img/b03a.jpg", "img/b03b.jpg"],
-["BLARE TRACKPANT - BLACK", "I.AM.GIA", "Pants", 129, 64.5, "AUD", "XXS,XS,S,M,L,XL", "img/b13a.jpg", "img/b13b.jpg"],
-["Accolade 1/4 Zip Pullover - Black", "Alo Yoga", "Outerwear", 5113000, 3558400, "VND", "XXS,XS,S,M,L,XL,2XL", "img/b23a.jpg", "img/b23b.jpg"],
-["TOUCH MINI DRESS - CREAM", "Lioness", "Dress", 109, 65.4, "AUD", "XXS,XS,S,M,L,XXL", "img/b04a.jpg", "img/b04b.jpg"],
-["BLARE HOODIE - BLACK", "I.AM.GIA", "Jacket", 119, 59.5, "AUD", "XXS,XS,S,M,L,XL", "img/b14a.jpg", "img/b14b.jpg"],
-["Muse Polo Cover Up - Ivory", "Alo Yoga", "Outerwear", 4076600, 2832900, "VND", "XXS,XS,S,M,L", "img/b24a.jpg", "img/b24b.jpg"],
-["TROPHY HALTER - PORCELAIN", "Lioness", "Top", 49, 29.4, "AUD", "XXS,XS,S,M,L,XL,XXL", "img/b05a.jpg", "img/b05b.jpg"],
-["AIDEN PLATINUM BANDAGE MIDI DRESS - GOLD", "I.AM.GIA", "Dress", 149, 74.5, "AUD", "XXS,XS,S,XL", "img/b15a.jpg", "img/b15b.jpg"],
-["Alosoft Finesse Long Sleeve - White", "Alo Yoga", "Top", 2902000, 2003800, "VND", "XXS,XS,S,M,L", "img/b25a.jpg", "img/b25b.jpg"],
-["LUMINOUS DRESS - SMOKE", "Lioness", "Dress", 69, 41.4, "AUD", "XXS,XS,S,M,XL,XXL", "img/b06a.jpg", "img/b06b.jpg"],
-["EVA BANDAGE CAPRI JUMPSUIT - BLACK", "I.AM.GIA", "Jumpsuit", 139, 69.5, "AUD", "XXS,XS,S,M,L,XL", "img/b16a.jpg", "img/b16b.jpg"],
-["ALO Softsculpt High-Waist Legging - Espresso", "Alo Yoga", "Pants", 4629300, 3212900, "VND", "XXS,XS,S,M,L", "img/b26a.jpg", "img/b26b.jpg"],
-["FIELD OF DREAMS MAXI SKIRT - SILVER", "Lioness", "Skirts", 79, 47.4, "AUD", "XXS,XS,S,M,L,XL,XXL", "img/b07a.jpg", "img/b07b.jpg"],
-["BLARE SHORT - PINK PANTHERA", "I.AM.GIA", "Shorts", 69, 17.5, "AUD", "XXS,XS,S,M,L,XL", "img/b17a.jpg", "img/b17b.jpg"],
-["Accolade Straight Leg Sweatpant - Black", "Alo Yoga", "Pants", 4767500, 3316500, "VND", "XXS,XS,S,M,L,XL,2XL", "img/b27a.jpg", "img/b27b.jpg"],
-["SILHOUETTE MINI DRESS - PITCH", "Lioness", "Dress", 69, 41.4, "AUD", "XS,S,M,L,XL", "img/b08a.jpg", "img/b08b.jpg"],
-["AIDEN BANDAGE MINI SKIRT - BABY PINK", "I.AM.GIA", "Skirts", 85, 42.5, "AUD", "XXS,XS,S,M,L", "img/b18a.jpg", "img/b18b.jpg"],
-["Sway Bootcut Sweatpant - Espresso", "Alo Yoga", "Pants", 4422000, 3074700, "VND", "XXS,XS,S,M,L", "img/b28a.jpg", "img/b28b.jpg"],
-["BARE CAMI - GOLD", "Lioness", "Top", 59, 35.4, "AUD", "XS,S,M,L,XL", "img/b09a.jpg", "img/b09b.jpg"],
-["SASHYA PLATINUM BANDAGE MINI DRESS - BLACK FOIL", "I.AM.GIA", "Dress", 139, 69.5, "AUD", "XXS,XS,S,M,L,XL", "img/b19a.jpg", "img/b19b.jpg"],
-["Cropped Serenity Coverup - Navy", "Alo Yoga", "Outerwear", 4422000, 3074700, "VND", "XS,S,M,L", "img/b29a.jpg", "img/b29b.jpg"],
-["HUDSON MAXI SKIRT - SILVER", "Lioness", "Skirts", 69, 41.4, "AUD", "XXS,XS,S,M,L,XL", "img/b10a.jpg", "img/b10b.jpg"],
-["CANDI TOP - CREAM", "I.AM.GIA", "Top", 85, 42.5, "AUD", "XXS,XS,S,M,L,XL", "img/b20a.jpg", "img/b20b.jpg"],
-["Aspire Tank - Black/White", "Alo Yoga", "Top", 2349200, 1623700, "VND", "XXS,XS,S,M,L", "img/b30a.jpg", "img/b30b.jpg"]
+["CRUSH MINI DRESS - VINYL", "Lioness", "Dress", 79, 47.4, "AUD", "XS,S,M,L,XL", "/img/b01a.jpg", "/img/b01b.jpg"],
+["ROSELLA BANDAGE MINI DRESS - RED", "I.AM.GIA", "Dress", 119, 59.5, "AUD", "XXS,XS,S,M,L,XL", "/img/b11a.jpg", "/img/b11b.jpg"],
+["Sherpa Edge Bomber - Deep Gravel", "Alo Yoga", "Jacket", 7876700, 5493000, "VND", "XXS,XS,S,M,L", "/img/b21a.jpg", "/img/b21b.jpg"],
+["SILHOUETTE MINI DRESS - VANILLA", "Lioness", "Dress", 69, 41.4, "AUD", "XS,S,M,L,XL,XXL", "/img/b02a.jpg", "/img/b02b.jpg"],
+["ROSELLA BANDAGE TOP - BABY PINK", "I.AM.GIA", "Top", 99, 49.5, "AUD", "XXS,XS,S,M,L,XL", "/img/b12a.jpg", "/img/b12b.jpg"],
+["Airbrush Heart Throb Bra - Black/White", "Alo Yoga", "Top", 3040200, 2107400, "VND", "XXS,XS,S,M,L", "/img/b22a.jpg", "/img/b22b.jpg"],
+["ANGELIC MINI DRESS - DESERT PYTHON", "Lioness", "Dress", 79, 47.4, "AUD", "XS,S,M,L", "/img/b03a.jpg", "/img/b03b.jpg"],
+["BLARE TRACKPANT - BLACK", "I.AM.GIA", "Pants", 129, 64.5, "AUD", "XXS,XS,S,M,L,XL", "/img/b13a.jpg", "/img/b13b.jpg"],
+["Accolade 1/4 Zip Pullover - Black", "Alo Yoga", "Outerwear", 5113000, 3558400, "VND", "XXS,XS,S,M,L,XL,2XL", "/img/b23a.jpg", "/img/b23b.jpg"],
+["TOUCH MINI DRESS - CREAM", "Lioness", "Dress", 109, 65.4, "AUD", "XXS,XS,S,M,L,XXL", "/img/b04a.jpg", "/img/b04b.jpg"],
+["BLARE HOODIE - BLACK", "I.AM.GIA", "Jacket", 119, 59.5, "AUD", "XXS,XS,S,M,L,XL", "/img/b14a.jpg", "/img/b14b.jpg"],
+["Muse Polo Cover Up - Ivory", "Alo Yoga", "Outerwear", 4076600, 2832900, "VND", "XXS,XS,S,M,L", "/img/b24a.jpg", "/img/b24b.jpg"],
+["TROPHY HALTER - PORCELAIN", "Lioness", "Top", 49, 29.4, "AUD", "XXS,XS,S,M,L,XL,XXL", "/img/b05a.jpg", "/img/b05b.jpg"],
+["AIDEN PLATINUM BANDAGE MIDI DRESS - GOLD", "I.AM.GIA", "Dress", 149, 74.5, "AUD", "XXS,XS,S,XL", "/img/b15a.jpg", "/img/b15b.jpg"],
+["Alosoft Finesse Long Sleeve - White", "Alo Yoga", "Top", 2902000, 2003800, "VND", "XXS,XS,S,M,L", "/img/b25a.jpg", "/img/b25b.jpg"],
+["LUMINOUS DRESS - SMOKE", "Lioness", "Dress", 69, 41.4, "AUD", "XXS,XS,S,M,XL,XXL", "/img/b06a.jpg", "/img/b06b.jpg"],
+["EVA BANDAGE CAPRI JUMPSUIT - BLACK", "I.AM.GIA", "Jumpsuit", 139, 69.5, "AUD", "XXS,XS,S,M,L,XL", "/img/b16a.jpg", "/img/b16b.jpg"],
+["ALO Softsculpt High-Waist Legging - Espresso", "Alo Yoga", "Pants", 4629300, 3212900, "VND", "XXS,XS,S,M,L", "/img/b26a.jpg", "/img/b26b.jpg"],
+["FIELD OF DREAMS MAXI SKIRT - SILVER", "Lioness", "Skirts", 79, 47.4, "AUD", "XXS,XS,S,M,L,XL,XXL", "/img/b07a.jpg", "/img/b07b.jpg"],
+["BLARE SHORT - PINK PANTHERA", "I.AM.GIA", "Shorts", 69, 17.5, "AUD", "XXS,XS,S,M,L,XL", "/img/b17a.jpg", "/img/b17b.jpg"],
+["Accolade Straight Leg Sweatpant - Black", "Alo Yoga", "Pants", 4767500, 3316500, "VND", "XXS,XS,S,M,L,XL,2XL", "/img/b27a.jpg", "/img/b27b.jpg"],
+["SILHOUETTE MINI DRESS - PITCH", "Lioness", "Dress", 69, 41.4, "AUD", "XS,S,M,L,XL", "/img/b08a.jpg", "/img/b08b.jpg"],
+["AIDEN BANDAGE MINI SKIRT - BABY PINK", "I.AM.GIA", "Skirts", 85, 42.5, "AUD", "XXS,XS,S,M,L", "/img/b18a.jpg", "/img/b18b.jpg"],
+["Sway Bootcut Sweatpant - Espresso", "Alo Yoga", "Pants", 4422000, 3074700, "VND", "XXS,XS,S,M,L", "/img/b28a.jpg", "/img/b28b.jpg"],
+["BARE CAMI - GOLD", "Lioness", "Top", 59, 35.4, "AUD", "XS,S,M,L,XL", "/img/b09a.jpg", "/img/b09b.jpg"],
+["SASHYA PLATINUM BANDAGE MINI DRESS - BLACK FOIL", "I.AM.GIA", "Dress", 139, 69.5, "AUD", "XXS,XS,S,M,L,XL", "/img/b19a.jpg", "/img/b19b.jpg"],
+["Cropped Serenity Coverup - Navy", "Alo Yoga", "Outerwear", 4422000, 3074700, "VND", "XS,S,M,L", "/img/b29a.jpg", "/img/b29b.jpg"],
+["HUDSON MAXI SKIRT - SILVER", "Lioness", "Skirts", 69, 41.4, "AUD", "XXS,XS,S,M,L,XL", "/img/b10a.jpg", "/img/b10b.jpg"],
+["CANDI TOP - CREAM", "I.AM.GIA", "Top", 85, 42.5, "AUD", "XXS,XS,S,M,L,XL", "/img/b20a.jpg", "/img/b20b.jpg"],
+["Aspire Tank - Black/White", "Alo Yoga", "Top", 2349200, 1623700, "VND", "XXS,XS,S,M,L", "/img/b30a.jpg", "/img/b30b.jpg"]
 ];
 const toVND=(p,cur,b)=>{const r=CONFIG.rates[cur]??CONFIG.rates.VND,m=CONFIG.brandMarkup[b]??CONFIG.markup;return Math.ceil((p*r*m+CONFIG.fee)/CONFIG.roundTo)*CONFIG.roundTo};
 const $=s=>document.querySelector(s);
@@ -456,10 +496,10 @@ function parseCSV(t){const rows=[];let row=[],f="",q=false;for(let i=0;i<t.lengt
 
 function renderHome(){
   const bs=items.length?[...new Set(items.map(i=>i.brand))]:Object.keys(CONFIG.brandSale);
-  $("#tiles").innerHTML=bs.map(b=>{const its=items.filter(i=>i.brand==b).sort(SORTS.hot[1]),a=its[0],z=its[1]||its[0];return `<a class="tile${a?"":" sk"}" href="#b-${bslug(b)}" aria-label="${esc(b)}">${a?`<img src="${esc(im(gimg(a,0),800))}" data-fb="${esc(fbOf(a.cat,0))}" alt="" fetchpriority="high"><img src="${esc(im(gimg(z,0),800))}" data-fb="${esc(fbOf(z.cat,0))}" alt="" loading="lazy">`:""}<div class="tin"><div class="tlogo${lcls(b)}">${LOGOS[b]||`<b class="up" style="font-size:40px">${esc(b)}</b>`}</div><div class="tfoot"><div class="toff"><small>SALE ĐẾN</small>−${bmax(b)}%</div><div class="tmeta">${its.length?its.length.toLocaleString("vi-VN")+" mẫu best seller":"Đang tải…"}<svg width="28" height="10" viewBox="0 0 28 10" fill="none" stroke="currentColor"><path d="M0 5h27M22 1l5 4-5 4"/></svg></div></div></div></a>`}).join("");
-  const mx=Math.max(...bs.map(bmax)),w=["Black Friday sale","Giảm đến −"+mx+"%","Best seller",...bs];
+  $("#tiles").innerHTML=bs.map(b=>{const its=items.filter(i=>i.brand==b).sort(SORTS.hot[1]),a=its[0],z=its[1]||its[0];return `<a class="tile${a?"":" sk"}" href="/b/${bslug(b)}" aria-label="${esc(b)}">${a?`<img src="${esc(im(gimg(a,0),800))}" data-fb="${esc(fbOf(a.cat,0))}" alt="" fetchpriority="high"><img src="${esc(im(gimg(z,0),800))}" data-fb="${esc(fbOf(z.cat,0))}" alt="" loading="lazy">`:""}<div class="tin"><div class="tlogo${lcls(b)}">${LOGOS[b]||`<b class="up" style="font-size:40px">${esc(b)}</b>`}</div><div class="tfoot"><div class="toff"><small>SALE ĐẾN</small>−${bmax(b)}%</div><div class="tmeta">${its.length?its.length.toLocaleString("vi-VN")+" mẫu best seller":"Đang tải…"}<svg width="28" height="10" viewBox="0 0 28 10" fill="none" stroke="currentColor"><path d="M0 5h27M22 1l5 4-5 4"/></svg></div></div></div></a>`}).join("");
+  const mx=Math.max(...bs.map(bmax)),w=["Merry Christmas","Black Friday sale","Giảm đến −"+mx+"%","Best seller",...bs];
   $("#track").innerHTML=[...w,...w].map(b=>`<span>${esc(b)}</span>`).join("");
-  const a=["BLACK FRIDAY · GIẢM ĐẾN −"+mx+"%","HÀNG CHÍNH HÃNG LIONESS · I.AM.GIA · ALO YOGA","NHẮN ZALO 0981 645 881 ĐỂ GIỮ SIZE"];
+  const a=["❄ GIÁNG SINH AN LÀNH ❄","BLACK FRIDAY · GIẢM ĐẾN −"+mx+"%","HÀNG CHÍNH HÃNG LIONESS · I.AM.GIA · ALO YOGA","NHẮN ZALO 0981 645 881 ĐỂ GIỮ SIZE"];
   $("#ann").innerHTML=[...a,...a,...a,...a].map(t=>`<span>${esc(t)}</span>`).join("");
 }
 function renderFilters(){
@@ -480,8 +520,8 @@ function syncUI(){document.querySelectorAll("[data-c]").forEach(x=>x.setAttribut
   document.querySelectorAll(".js-sort").forEach(x=>x.value=sort);document.querySelectorAll(".js-q").forEach(x=>{if(x!==document.activeElement)x.value=q});
   $("#fbadge").hidden=cat=="Tất cả"&&sort=="hot"&&!q.trim()}
 function sheet(on){$("#sheet").classList.toggle("open",on);$("#sheet").setAttribute("aria-hidden",!on);document.body.style.overflow=on?"hidden":""}
-function showView(b){
-  const home=!b;$("#home").hidden=!home;$("#bview").hidden=home;
+function showView(b,fb){
+  const home=!b&&!fb;$("#home").hidden=!home;$("#bview").hidden=!b||fb;$("#fview").hidden=!fb;document.body.classList.toggle("fbv",!!fb);if(fb){renderFeedback();brand=null;document.body.classList.remove("inb");return}
   if(b&&b!=brand){brand=b;cat="Tất cả";q="";renderFilters();renderGrid()}
   if(home)brand=null;document.body.classList.toggle("inb",!home);
 }
@@ -509,7 +549,8 @@ function more(){
 const sio=new IntersectionObserver(es=>{if(es[0].isIntersecting&&brand&&!$("#more").hidden)more()},{rootMargin:"600px 0px"});
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}}),{rootMargin:"0px 0px -6% 0px"});
 
-const plink=i=>(CONFIG.siteUrl||location.origin+location.pathname)+"#sp-"+encodeURIComponent(i.id);
+const plink=i=>(CONFIG.siteUrl||location.origin+"/").replace(/\/?$/,"/")+"sp/"+encodeURIComponent(i.id);
+function go(path){if(location.pathname+location.search!=path)history.pushState(null,"",path);route()}
 function msg(i){return plink(i)}
 function colorsH(G,c){if(!(G.colors.length>1||c.col))return "";
   const btn=x=>`<button data-col="${esc(x.id)}" class="${x.so?"so":""}" aria-pressed="${x.id==c.id}" title="${esc(x.col)}${x.so?" (hết hàng)":""}" aria-label="${esc(x.col)}${x.so?" hết hàng":""}"><img src="${esc(im(x.imgs[0],160))}" alt="" loading="lazy"></button>`;
@@ -517,6 +558,17 @@ function colorsH(G,c){if(!(G.colors.length>1||c.col))return "";
   if(grp){const gs=["Core","Limited"].map(k=>[k,G.colors.filter(x=>(x.cg||"Core")==k)]).filter(g=>g[1].length);
     return `<div>${gs.map(([k,xs])=>`<div class="cgl"><b>${k}</b>${xs.some(x=>x.id==c.id)?`: <span>${esc(c.col)}</span>`:""}</div><div class="cols">${xs.map(btn).join("")}</div>`).join("")}</div>`}
   return `<div><div class="lbl">MÀU: <span class="lv">${esc(c.col||"")}</span>${many?` <span class="lh">(${G.colors.length} màu${G.colors.some(x=>x.so)?", gạch chéo là đã hết":""})</span>`:""}</div>${many?`<div class="cols">${G.colors.map(btn).join("")}</div>`:""}</div>`}
+let FEED=[],FEED_LIVE=false;
+const driveImg=u=>{const m=String(u).match(/(?:\/d\/|[?&]id=)([\w-]{20,})/);return m?`https://lh3.googleusercontent.com/d/${m[1]}=w1200`:String(u).trim()};
+const spId=u=>{const m=String(u).match(/(?:\/sp\/|#sp-)([^?#\s]+)/);return m?decodeURIComponent(m[1]):""};
+if(CONFIG.feedbackCsv)fetch(CONFIG.feedbackCsv).then(r=>r.ok?r.text():Promise.reject()).then(t=>{FEED=parseCSV(t).slice(1).filter(x=>(x[0]||"").trim()).map(x=>({img:driveImg(x[0]),id:spId(x[1]||""),note:(x[2]||"").trim().slice(0,200)})).reverse();FEED_LIVE=true;if(!$("#fview").hidden)renderFeedback()}).catch(()=>{});
+function renderFeedback(){const g=$("#fgrid");if(!g)return;
+  if(!FEED.length){g.innerHTML=`<p class="fempty">Mai đang cập nhật hình feedback, bạn quay lại sau nhé ❄</p>`;return}
+  g.innerHTML=FEED.map((f,k)=>{const fc=f.id&&findColor(f.id),G=fc&&fc[0];const href=G?"/sp/"+encodeURIComponent(f.id):"";
+    const im1=`<img src="${esc(f.img)}" alt="${esc(G?G.name:"Feedback khách hàng")}" loading="${k<6?"eager":"lazy"}" decoding="async">`;
+    return `<figure class="fcard">${href?`<a href="${href}">${im1}</a><a class="fl" href="${href}"><span>${esc(G.name)}</span><em>Xem mẫu →</em></a>`:im1}${f.note?`<p>${esc(f.note)}</p>`:""}</figure>`}).join("")}
+(function(){const s=$("#snow");if(!s||matchMedia("(prefers-reduced-motion: reduce)").matches)return;const n=innerWidth<760?14:26;let h="";
+  for(let k=0;k<n;k++){const sz=(Math.random()*4+3).toFixed(1);h+=`<i style="left:${(Math.random()*100).toFixed(1)}%;--s:${sz}px;--d:${(Math.random()*10+9).toFixed(1)}s;--w:-${(Math.random()*18).toFixed(1)}s;--x:${(Math.random()*80-40).toFixed(0)}px;opacity:${(Math.random()*.5+.45).toFixed(2)}"></i>`}s.innerHTML=h})();
 function findColor(id){for(const G of items){const c=G.colors.find(c=>c.id==id);if(c)return [G,c]}return []}
 function openItem(id,push){
   const [G,c]=findColor(id);if(!G)return;const keep=$("#dlg").classList.contains("open")&&cur&&cur.G==G;
@@ -536,15 +588,16 @@ function openItem(id,push){
       <div class="row2"><button class="opt" id="zalo">${ZL}<span>Zalo</span></button><a class="opt" id="mess" href="#">${MS}<span>Messenger</span></a></div></div>
     <p class="fine">Hàng chính hãng ${esc(G.brand)}. Mai xác nhận còn hàng trước khi chốt đơn.</p></div>`;
   updMess();if(!keep)$("#box").scrollTop=0;const g=$("#gal");g.addEventListener("scroll",()=>{const k=Math.round(g.scrollLeft/(g.firstElementChild.offsetWidth||1));g.parentNode.querySelectorAll(".dots i").forEach((d,n)=>d.classList.toggle("on",n==k))},{passive:true});$("#dlg").classList.add("open");document.body.style.overflow="hidden";
-  showView(G.brand);if(push)history.replaceState(null,"","#sp-"+encodeURIComponent(c.id));
+  showView(G.brand);const P="/sp/"+encodeURIComponent(c.id);if(push&&location.pathname!=P){if(keep)history.replaceState(null,"",P);else history.pushState(null,"",P)}
 }
 function updMess(){const a=$("#mess");if(a&&cur)a.href=`https://m.me/${CONFIG.messenger}?text=${encodeURIComponent(msg(cur))}`}
-function close(){$("#dlg").classList.remove("open");document.body.style.overflow="";cur=null;history.replaceState(null,"",brand?"#b-"+bslug(brand):location.pathname+location.search)}
+function close(){$("#dlg").classList.remove("open");document.body.style.overflow="";cur=null;history.replaceState(null,"",brand?"/b/"+bslug(brand):"/")}
 let tt;function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>e.classList.remove("on"),2600)}
 async function copy(t){try{await navigator.clipboard.writeText(t);return true}catch(e){return false}}
 
 document.addEventListener("click",async e=>{
-  if(e.target.closest("#back")){e.preventDefault();history.pushState(null,"",location.pathname+location.search);route();return}
+  if(e.target.closest("#back")){e.preventDefault();go("/");return}
+  const ia=e.target.closest('a[href^="/"]');if(ia&&!e.metaKey&&!e.ctrlKey&&!e.shiftKey){e.preventDefault();go(ia.getAttribute("href"));return}
   const cc=e.target.closest("[data-c]");if(cc){cat=cc.dataset.c;renderGrid();if(!cc.closest("#sheet")&&innerWidth>760||cc.closest(".side"))scrollTo({top:Math.min(scrollY,$("#bview").offsetTop+$(".bhead").offsetHeight),behavior:"smooth"});return}
   const so=e.target.closest("[data-sort]");if(so){sort=so.dataset.sort;renderGrid();return}
   if(e.target.closest("#fopen")){sheet(true);return}
@@ -566,8 +619,12 @@ document.addEventListener("mouseover",e=>{const w=e.target.closest(".sw");if(!w)
   cd.dataset.gid=gid;const c=gr.colors[+w.dataset.k];if(!c)return;const img=cd.querySelector(".ph img");img.srcset=sset(c.imgs[0]);img.src=im(c.imgs[0],540);cd.dataset.id=c.id;cd.querySelectorAll(".sw").forEach(x=>x.classList.toggle("on",x==w))});
 document.addEventListener("change",e=>{if(e.target.classList.contains("js-sort")){sort=e.target.value;renderGrid()}});
 let qt;document.addEventListener("input",e=>{if(e.target.classList.contains("js-q")){clearTimeout(qt);qt=setTimeout(()=>{q=e.target.value;renderGrid()},250)}});
-function route(){const h=location.hash,m=h.match(/^#sp-(.+)$/),b=h.match(/^#b-([a-z0-9-]+)$/);
-  if(m){openItem(decodeURIComponent(m[1]),false);return}
+function route(){const h=location.hash,lm=h.match(/^#sp-(.+)$/),lb=h.match(/^#b-([a-z0-9-]+)$/);
+  if(lm||lb){history.replaceState(null,"",lm?"/sp/"+lm[1]:"/b/"+lb[1])}  // link cũ dạng #sp-… / #b-…
+  else if(h&&h!="#")return;  // neo trong trang (vd #lienhe): không đổi trang
+  if(/^\/feedback\/?$/.test(location.pathname)){if($("#dlg").classList.contains("open")){$("#dlg").classList.remove("open");document.body.style.overflow="";cur=null}showView(null,true);scrollTo({top:0,behavior:"instant"});return}
+  const pth=location.pathname,m=pth.match(/^\/sp\/(.+)$/),b=pth.match(/^\/b\/([a-z0-9-]+)\/?$/);
+  if(m){openItem(decodeURIComponent(m[1]),false);if(!$("#dlg").classList.contains("open")&&items.length&&live)history.replaceState(null,"","/");return}
   if($("#dlg").classList.contains("open")){$("#dlg").classList.remove("open");document.body.style.overflow="";cur=null}
   const bn=b&&[...new Set(items.map(i=>i.brand))].find(x=>bslug(x)==b[1]);showView(bn||null);scrollTo({top:0,behavior:"instant"})}
 addEventListener("hashchange",route);addEventListener("popstate",route);
@@ -586,7 +643,7 @@ const getData=u=>u?fetch(u).then(r=>r.ok?r.json():null).catch(()=>null):Promise.
 const ok=d=>d&&d.items&&d.items.length?d:null;
 if(CONFIG.dataUrl||CONFIG.githubRepo){(CONFIG.githubRepo?getData(`https://raw.githubusercontent.com/${CONFIG.githubRepo}/data/products.json`):Promise.resolve(null)).then(d=>ok(d)||getData(CONFIG.dataUrl).then(ok)).then(d=>{
   if(!d){items=SAMPLE.map(norm).map(fromSample);brand=null;boot();return}
-  if(d.brandSale)Object.assign(CONFIG.brandSale,d.brandSale);DCATS=d.cats||{};
+  if(d.brandSale)Object.assign(CONFIG.brandSale,d.brandSale);DCATS=d.cats||{};if(!FEED_LIVE)FEED=d.feedback||[];
   RATE_OK=d.rateOk!==false&&!(d.rateGoodAt&&Date.now()-Date.parse(d.rateGoodAt)>72*36e5);
   items=groupItems(d.items);live=true;brand=null;boot()})}
 if(CONFIG.ratesCsv){fetch(CONFIG.ratesCsv).then(r=>r.text()).then(t=>{parseCSV(t).forEach(([c,v])=>{const x=parseFloat(String(v).replace(/,/g,""));if(c&&x)CONFIG.rates[c.trim().toUpperCase()]=x});items=SAMPLE.map(norm).map(fromSample);boot()}).catch(()=>{})}
