@@ -121,6 +121,7 @@ button{font:inherit;color:inherit;cursor:pointer;background:none;border:0}
 .info .reg{font-size:14px;margin-top:-4px}.info .reg .was{font-size:14px}
 .cp s{color:var(--strike);font-weight:400;font-size:12px;margin-left:6px}
 .csave{display:flex;justify-content:space-between;font-size:13px;color:var(--red);font-weight:600;margin-top:4px}.creg{display:flex;justify-content:space-between;font-size:13px;color:var(--soft);margin-bottom:4px}
+.chip.hot{color:var(--red);border-color:var(--red);font-weight:700}.chip.hot[aria-pressed="true"]{background:var(--red);color:#fff}.sopt.hot span{color:var(--red);font-weight:700}
 .how .webnote{margin:14px 0 0;line-height:1.4;display:inline-block;background:var(--red);color:#fff;font-weight:700;font-size:14px;padding:8px 14px;letter-spacing:.02em}
 .sz{font-size:11px;color:var(--soft);letter-spacing:.04em}
 .rv .ph{clip-path:inset(0 0 100% 0);transition:clip-path 1.1s var(--ease)}
@@ -688,14 +689,14 @@ function renderHome(){
 function renderFilters(){
   const its=items.filter(i=>i.brand==brand),n=c=>its.filter(i=>inCat(i,c)).length;
   const bc=DCATS[brand]||CATS,cs=["Tất cả",...(its.some(i=>i.bs)?[BS]:[]),...bc.filter(c=>c!=BS&&its.some(i=>i.cat==c)),...[...new Set(its.map(i=>i.cat))].filter(c=>!bc.includes(c))],P=(a,b)=>`aria-pressed="${a==b}"`;
-  const chips=cs.map(c=>`<button class="chip" ${P(c,cat)} data-c="${esc(c)}">${esc(c)}</button>`).join("");
+  const hot=c=>c==BS?" hot":"",lab=c=>c==BS?"★ Best Seller":esc(c);const chips=cs.map(c=>`<button class="chip${hot(c)}" ${P(c,cat)} data-c="${esc(c)}">${lab(c)}</button>`).join("");
   const sel=`<select class="sel js-sort" aria-label="Sắp xếp">${Object.entries(SORTS).map(([k,[t]])=>`<option value="${k}"${k==sort?" selected":""}>${esc(t)}</option>`).join("")}</select>`;
   const srch=`<input class="srch js-q" type="search" placeholder="Tìm mẫu…" value="${esc(q)}" aria-label="Tìm tên mẫu" enterkeyhint="search">`;
   $("#filters").innerHTML=`<div class="frow"><span class="flab">Loại</span>${chips}<span class="count js-count"></span></div><div class="frow r2"><span class="flab">Sắp xếp</span>${sel}${srch}</div>`;
-  $("#side").innerHTML=`<div class="sblk">${srch}</div><div class="sblk"><div class="slab">Loại</div>${cs.map(c=>`<button class="sopt" ${P(c,cat)} data-c="${esc(c)}"><span>${esc(c)}</span><small>${n(c).toLocaleString("vi-VN")}</small></button>`).join("")}</div>
+  $("#side").innerHTML=`<div class="sblk">${srch}</div><div class="sblk"><div class="slab">Loại</div>${cs.map(c=>`<button class="sopt${hot(c)}" ${P(c,cat)} data-c="${esc(c)}"><span>${lab(c)}</span><small>${n(c).toLocaleString("vi-VN")}</small></button>`).join("")}</div>
     <div class="sblk"><div class="slab">Sắp xếp</div>${Object.entries(SORTS).map(([k,[t]])=>`<button class="sopt" ${P(k,sort)} data-sort="${k}"><span>${esc(t)}</span></button>`).join("")}</div><div class="scount js-count"></div>`;
   $("#sbody").innerHTML=`<div class="sblk">${srch}</div><div class="sblk"><div class="slab">Sắp xếp</div><div class="sgrid">${Object.entries(SORTS).map(([k,[t]])=>`<button class="chip" ${P(k,sort)} data-sort="${k}">${esc(t)}</button>`).join("")}</div></div>
-    <div class="sblk"><div class="slab">Loại</div><div class="sgrid">${cs.map(c=>`<button class="chip" ${P(c,cat)} data-c="${esc(c)}">${esc(c)} <small>${n(c)}</small></button>`).join("")}</div></div>`;
+    <div class="sblk"><div class="slab">Loại</div><div class="sgrid">${cs.map(c=>`<button class="chip${hot(c)}" ${P(c,cat)} data-c="${esc(c)}">${lab(c)} <small>${n(c)}</small></button>`).join("")}</div></div>`;
   $("#blogo").className="blogo"+lcls(brand);$("#blogo").innerHTML=LOGOS[brand]||`<b class="up" style="font-size:32px">${esc(brand)}</b>`;
   $("#bsale").innerHTML=`<div class="toff" style="display:inline-block"><small>SALE ĐẾN</small>−${bmax(brand)}%</div>`;
 }
@@ -913,7 +914,7 @@ function boot(){const b=brand;brand=null;renderHome();route();if(b&&!brand)showV
 boot();sio.observe($("#more"));
 const getData=u=>u?fetch(u).then(r=>r.ok?r.json():null).catch(()=>null):Promise.resolve(null);
 const ok=d=>d&&d.items&&d.items.length?d:null;
-if(CONFIG.dataUrl||CONFIG.githubRepo){(CONFIG.githubRepo?getData(`https://raw.githubusercontent.com/${CONFIG.githubRepo}/data/products.json`):Promise.resolve(null)).then(d=>ok(d)||getData(CONFIG.dataUrl).then(ok)).then(d=>{
+if(CONFIG.dataUrl||CONFIG.githubRepo){(CONFIG.githubRepo?getData(`https://raw.githubusercontent.com/${CONFIG.githubRepo}/data/products.json?t=${Math.floor(Date.now()/6e5)}`):Promise.resolve(null)).then(d=>ok(d)||getData(CONFIG.dataUrl).then(ok)).then(d=>{
   if(!d){items=SAMPLE.map(norm).map(fromSample);brand=null;boot();return}
   if(d.brandSale)Object.assign(CONFIG.brandSale,d.brandSale);DCATS=d.cats||{};if(!FEED_LIVE)FEED=d.feedback||[];
   RATE_OK=d.rateOk!==false&&!(d.rateGoodAt&&Date.now()-Date.parse(d.rateGoodAt)>72*36e5);
