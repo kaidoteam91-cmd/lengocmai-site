@@ -681,7 +681,7 @@ const bmax=b=>CONFIG.brandSale[b]??Math.max(0,...items.filter(i=>i.brand==b).map
 
 function parseCSV(t){const rows=[];let row=[],f="",q=false;for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c=='"'&&t[i+1]=='"'){f+='"';i++}else if(c=='"')q=false;else f+=c}else if(c=='"')q=true;else if(c==","){row.push(f);f=""}else if(c=="\n"){row.push(f);rows.push(row);row=[];f=""}else if(c!="\r")f+=c}if(f||row.length){row.push(f);rows.push(row)}return rows}
 
-let HOME=null;
+let HOME=window.__HJ&&window.__HJ.brands?window.__HJ:null;if(HOME&&HOME.brandSale)Object.assign(CONFIG.brandSale,HOME.brandSale);
 function renderHome(){
   const bs=items.length?[...new Set(items.map(i=>i.brand))]:HOME?Object.keys(HOME.brands):Object.keys(CONFIG.brandSale);
   $("#tiles").innerHTML=bs.map(b=>{const its=items.filter(i=>i.brand==b).sort(SORTS.hot[1]),a=its[0],z=its[1]||its[0],H=!its.length&&HOME&&HOME.brands[b],hi=H?H.i.map(ex):[],nn=its.length||(H&&H.n)||0;return `<a class="tile${a||hi.length?"":" sk"}" href="/b/${bslug(b)}" aria-label="${esc(b)}">${a?`<img src="${esc(im(gimg(a,0),800))}" data-fb="${esc(fbOf(a.cat,0))}" alt="" fetchpriority="high"><img src="${esc(im(gimg(z,0),800))}" data-fb="${esc(fbOf(z.cat,0))}" alt="" loading="lazy">`:hi.length?`<img src="${esc(im(hi[0],800))}" alt="" fetchpriority="high"><img src="${esc(im(hi[1]||hi[0],800))}" alt="" loading="lazy">`:""}<div class="tin"><div class="tlogo${lcls(b)}">${LOGOS[b]||`<b class="up" style="font-size:40px">${esc(b)}</b>`}</div><div class="tfoot"><div class="toff"><small>SALE ĐẾN</small>−${bmax(b)}%</div><div class="tmeta">${nn?nn.toLocaleString("vi-VN")+" mẫu":"Đang tải…"}<svg width="28" height="10" viewBox="0 0 28 10" fill="none" stroke="currentColor"><path d="M0 5h27M22 1l5 4-5 4"/></svg></div></div></div></a>`}).join("");
@@ -918,7 +918,7 @@ function boot(){const b=brand;brand=null;renderHome();route();if(b&&!brand)showV
 boot();sio.observe($("#more"));
 const getData=u=>u?fetch(u).then(r=>r.ok?r.json():null).catch(()=>null):Promise.resolve(null);
 const ok=d=>d&&d.items&&d.items.length?d:null;
-if(window.__H)window.__H.then(h=>{if(h&&h.brands&&!items.length){HOME=h;if(h.brandSale)Object.assign(CONFIG.brandSale,h.brandSale);if(!brand)renderHome()}});
+if(window.__H)window.__H.then(h=>{if(h&&h.brands&&!items.length&&!(HOME&&HOME.updated==h.updated)){HOME=h;if(h.brandSale)Object.assign(CONFIG.brandSale,h.brandSale);if(!brand)renderHome()}});
 if(CONFIG.dataUrl||CONFIG.githubRepo){(CONFIG.githubRepo?(window.__D||getData(`https://raw.githubusercontent.com/${CONFIG.githubRepo}/data/products.json?t=${Math.floor(Date.now()/6e5)}`)):Promise.resolve(null)).then(d=>ok(d)||getData(CONFIG.dataUrl).then(ok)).then(d=>{
   if(!d){items=SAMPLE.map(norm).map(fromSample);brand=null;boot();return}
   if(d.brandSale)Object.assign(CONFIG.brandSale,d.brandSale);DCATS=d.cats||{};if(!FEED_LIVE)FEED=d.feedback||[];
