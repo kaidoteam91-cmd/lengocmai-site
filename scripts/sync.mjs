@@ -11,7 +11,8 @@ const CFG = {
   rateBounds: { AUD: [12000, 24000] },                    // tỉ giá ngoài khoảng này = coi là lỗi
   maxJump: 0.06,                                          // tỉ giá mới lệch > 6% so với lần trước = coi là lỗi
   maxRateAgeH: 72,                                        // tỉ giá cũ quá 72 giờ thì KHÔNG hiện giá AUD
-  overridesCsv: process.env.OVERRIDES_CSV || "",         // (tuỳ chọn) CSV: handle | thao_tac (an / ghim)
+  overridesCsv: process.env.OVERRIDES_CSV || "",
+  feedbackCsv: process.env.FEEDBACK_CSV || "https://docs.google.com/spreadsheets/d/e/2PACX-1vSSms356KKRux1jaDpxKgoK3EvOZ-gcD-uZ5xT1L2RfNz3wtbYuzAxzuUz55vvM3ENF5kDKR-UlpZAr/pub?gid=1105504292&single=true&output=csv",            // CSV feedback (Google Sheet tab "web" đã xuất bản): anh | link_mau | ghi_chu         // (tuỳ chọn) CSV: handle | thao_tac (an / ghim)
 };
 
 // Giá hiển thị: Lioness, I.AM.GIA = giá AUD × tỉ giá bán VCB × 1.07 + 550.000, làm tròn lên 50.000.
@@ -86,6 +87,21 @@ async function overrides() {
     if (!h) continue; if (/an|ẩn|hide/.test(a)) hide.add(h); if (/ghim|pin/.test(a)) pin.add(h);
   }
   return { hide, pin };
+}
+
+// Feedback: ảnh Google Drive / link ảnh bất kỳ + link mẫu trên lengocmai.com
+function csvRows(t) { const rows = []; let row = [], f = "", q = false;
+  for (let i = 0; i < t.length; i++) { const c = t[i];
+    if (q) { if (c == '"' && t[i + 1] == '"') { f += '"'; i++ } else if (c == '"') q = false; else f += c }
+    else if (c == '"') q = true; else if (c == ",") { row.push(f); f = "" } else if (c == "\n") { row.push(f); rows.push(row); row = []; f = "" } else if (c != "\r") f += c }
+  if (f || row.length) { row.push(f); rows.push(row) } return rows; }
+const driveImg = u => { const m = String(u).match(/(?:\/d\/|[?&]id=)([\w-]{20,})/); return m ? `https://lh3.googleusercontent.com/d/${m[1]}=w1200` : String(u).trim(); };
+const spId = u => { const m = String(u).match(/(?:\/sp\/|#sp-)([^?#\s]+)/); return m ? decodeURIComponent(m[1]) : ""; };
+async function feedback() {
+  if (!CFG.feedbackCsv) return null;
+  const r = await fetch(CFG.feedbackCsv); if (!r.ok) throw new Error("HTTP " + r.status);
+  return csvRows(await r.text()).slice(1).filter(x => (x[0] || "").trim())
+    .map(x => ({ img: driveImg(x[0]), id: spId(x[1] || ""), note: (x[2] || "").trim().slice(0, 200) })).reverse();
 }
 
 // Tách 1 sản phẩm Shopify thành các mẫu theo màu (đa số brand đã để mỗi màu là 1 sản phẩm riêng)
@@ -168,7 +184,9 @@ async function main() {
       out.push(...old); status[b.name] = "cũ:" + old.length; if (prev?.cats?.[b.name]) cats[b.name] = prev.cats[b.name];
     }
   }
-  const data = { v: 2, updated: new Date().toISOString(), rates: { AUD: rates.AUD, USD: rates.USD, VND: 1, _at: rates._at || "" },
+  let fb = null; try { fb = await feedback(); } catch (e) { console.warn("Feedback lỗi:", e.message); }
+  if (fb == null) fb = prev?.feedback || [];
+  const data = { v: 2, feedback: fb, updated: new Date().toISOString(), rates: { AUD: rates.AUD, USD: rates.USD, VND: 1, _at: rates._at || "" },
     rateOk, rateGoodAt: goodAt, rateNote,
     brandSale: CFG.brandSale, cats, status, items: out };
   await mkdir(new URL("../public/data/", import.meta.url), { recursive: true });
