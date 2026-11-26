@@ -1,23 +1,35 @@
-// Đồng bộ sản phẩm từ 3 web brand (Shopify) -> public/data/products.json
-// Chạy: node scripts/sync.mjs   (Node 18+). GitHub Actions chạy tự động mỗi ngày.
+// Đồng bộ sản phẩm BEST SELLER từ 3 web brand (Shopify) -> public/data/products.json
+// Chạy: node scripts/sync.mjs   (Node 18+). GitHub Actions chạy tự động mỗi tiếng.
 import { writeFile, readFile, mkdir } from "node:fs/promises";
 
 const OUT = new URL("../public/data/products.json", import.meta.url);
 const CFG = {
   markup: 1.07, fee: 550000, roundTo: 50000,
-  brandMarkup: { "Alo Yoga": 1 },                 // Alo: giá web VND + 550.000
-  brandSale: { "Lioness": 50, "I.AM.GIA": 75, "Alo Yoga": 30 }, // % sale gốc hiện ở ô brand (sửa tay khi brand đổi đợt sale)
+  maxPrice: 8000000,                                     // chỉ lấy mẫu có giá hiển thị <= 8 triệu
+  brandSale: { "Lioness": 50, "I.AM.GIA": 75, "Alo Yoga": 30 }, // % sale ở ô brand (sửa tay khi brand đổi đợt sale)
   fallbackRates: { AUD: 17403.88, USD: 25970, VND: 1 },
-  // (tuỳ chọn) Google Sheet đã "Xuất bản lên web" dạng CSV, cột: handle | thao_tac (an / ghim)
-  overridesCsv: process.env.OVERRIDES_CSV || "",
+  overridesCsv: process.env.OVERRIDES_CSV || "",         // (tuỳ chọn) CSV: handle | thao_tac (an / ghim)
 };
+
+// Giá hiển thị: Lioness, I.AM.GIA = giá AUD × tỉ giá bán VCB × 1.07 + 550.000, làm tròn lên 50.000.
+// Alo Yoga = giá web VND + 550.000 (giữ nguyên, không làm tròn).
 const BRANDS = [
-  { name: "Lioness", base: "https://lionessfashion.com", cur: "AUD", best: "/collections/best-sellers/products.json?limit=250" },
-  { name: "I.AM.GIA", base: "https://au.iamgia.com", cur: "AUD", best: null },
-  { name: "Alo Yoga", base: "https://www.aloyoga.com/en-vn", cur: "VND", best: "/collections/bestsellers/products.json?limit=250",
-    keep: p => /^(w|u)\d/i.test(p.handle) || /women/i.test(p.product_type) },
+  { name: "Lioness", base: "https://lionessfashion.com", cur: "AUD", best: "best-sellers",
+    cats: ["Tops", "Dresses", "Pants", "Outerwear", "Shorts", "Skirts", "Jackets", "Denim", "Sets", "Swim"],
+    cat: p => { const t = (p.product_type || "").replace(/^women'?s\s*/i, "").trim();
+      if (/denim|jean/i.test(t)) return "Denim"; if (/swim|bikini/i.test(t)) return "Swim"; return t || "Tops"; } },
+  { name: "I.AM.GIA", base: "https://au.iamgia.com", cur: "AUD", best: "most-wanted",
+    cats: ["Dresses", "Tops", "Pants", "Shorts", "Skirts", "Sets", "Tracksuits", "Jackets", "Jumpsuits", "Bikinis", "Bottoms", "Lingerie", "Accessories", "Footwear"],
+    cat: p => { const t = (p.product_type || "").split(":")[0].trim();
+      if (!t || /^axx$/i.test(t) || /access/i.test(t)) return "Accessories"; return t; } },
+  { name: "Alo Yoga", base: "https://www.aloyoga.com/en-vn", cur: "VND", best: "bestsellers", exact: true,
+    cats: ["Leggings", "Bras", "Tanks", "Short Sleeves", "Long Sleeves", "Pants", "Sweatpants", "Shorts", "Skirts", "Dresses", "Jackets", "Hoodies", "Pullovers", "Accessories"],
+    keep: p => /^women/i.test(p.product_type || ""),
+    group: p => (p.tags || []).map(t => (t.match(/^StyleId:(.+)$/) || [])[1]).find(Boolean),
+    cat: p => { const s = (p.product_type || "").split(":").map(x => x.trim()).filter(Boolean);
+      if (s.includes("Accessories")) return "Accessories"; return s[s.length - 1] || "Tops"; } },
 ];
-const UA = { "user-agent": "Mozilla/5.0 (compatible; lengocmai-sync/1.0)", accept: "application/json" };
+const UA = { "user-agent": "Mozilla/5.0 (compatible; lengocmai-sync/2.0)", accept: "application/json" };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 async function getJSON(url, tries = 3) {
@@ -32,46 +44,38 @@ async function getJSON(url, tries = 3) {
   }
   throw new Error("Không lấy được " + url);
 }
+async function allPages(path) {
+  const out = [];
+  for (let page = 1; page < 60; page++) {
+    const j = await getJSON(`${path}${path.includes("?") ? "&" : "?"}limit=250&page=${page}`);
+    const ps = j?.products || []; if (!ps.length) break;
+    out.push(...ps); await sleep(350);
+  }
+  return out;
+}
 
 async function vcbRates() {
   try {
     const r = await fetch("https://portal.vietcombank.com.vn/Usercontrols/TVPortal.TyGia/pXML.aspx", { headers: { "user-agent": UA["user-agent"] } });
-    const x = await r.text();
-    const out = { VND: 1 };
+    const x = await r.text(); const out = { VND: 1 };
     for (const m of x.matchAll(/CurrencyCode="(\w+)"[^>]*?Sell="([\d,.]+)"/g)) out[m[1]] = parseFloat(m[2].replace(/,/g, ""));
     if (out.AUD > 1000) { out._at = (x.match(/<DateTime>([^<]+)/) || [])[1] || ""; return out; }
   } catch (e) { console.warn("VCB lỗi:", e.message); }
   return null;
 }
 
-const CAT_RULES = [
-  ["Accessories", /gift ?card|e-?voucher|bag|tote|hat|cap\b|beanie|sock|jewel|necklace|earring|belt|bottle|mat\b|scrunch|headband|sunglass|accessor|towel|candle/],
-  ["Shoes", /shoe|sneaker|heel|boot|sandal|slide|loafer|mule|trainer/],
-  ["Swim", /swim|bikini|one ?piece swim/],
-  ["Dress", /dress|gown/],
-  ["Jumpsuit", /jumpsuit|playsuit|romper|unitard|onesie|catsuit/],
-  ["Skirts", /skirt|skort/],
-  ["Shorts", /short(?!\s*-?\s*sleeve)/],
-  ["Pants", /pant|legging|jean|trouser|jogger|capri|flare|bottom|tight/],
-  ["Jacket", /jacket|blazer|bomber|hoodie|zip/],
-  ["Outerwear", /coat|trench|puffer|vest|gilet|outerwear|cover ?up|coverup|pullover|sweater|sweatshirt|cardigan|knit|crew/],
-  ["Top", /top|tee|t-shirt|tank|bra\b|bralette|cami|bodysuit|shirt|blouse|corset|sleeve|polo|halter|tube/],
-];
-function category(p) {
-  const t = (p.product_type || "").toLowerCase(), n = (p.title || "").toLowerCase();
-  for (const src of [t, n]) for (const [c, re] of CAT_RULES) if (re.test(src)) return c;
-  return "Top";
-}
-const price = (v, cur, brand, rates) => {
-  const r = rates[cur] ?? 1, m = CFG.brandMarkup[brand] ?? CFG.markup;
-  return Math.ceil((v * r * m + CFG.fee) / CFG.roundTo) * CFG.roundTo;
-};
-const img = s => s ? s.split("?")[0] + "?width=600" : "";
+const priceOf = (v, b, rates) => b.exact
+  ? Math.round(v + CFG.fee)
+  : Math.ceil((v * (rates[b.cur] ?? 1) * CFG.markup + CFG.fee) / CFG.roundTo) * CFG.roundTo;
+// rút gọn link ảnh Shopify cho file nhẹ hơn ("~" = https://cdn.shopify.com/s/files/)
+const img = s => { if (!s) return ""; s = s.split("?")[0].replace(/^https?:/, ""); return s.replace(/^\/\/cdn\.shopify\.com\/s\/files\//, "~"); };
+const baseTitle = t => t.includes(" - ") ? t.slice(0, t.lastIndexOf(" - ")).trim() : t.trim();
+const colorTitle = t => t.includes(" - ") ? t.slice(t.lastIndexOf(" - ") + 3).trim() : "";
+const groupKey = (p, b) => b.name.slice(0, 3).toLowerCase() + ":" + ((b.group && b.group(p)) || baseTitle(p.title).toUpperCase());
 
 async function overrides() {
   if (!CFG.overridesCsv) return { hide: new Set(), pin: new Set() };
-  const t = await (await fetch(CFG.overridesCsv)).text();
-  const hide = new Set(), pin = new Set();
+  const t = await (await fetch(CFG.overridesCsv)).text(); const hide = new Set(), pin = new Set();
   for (const line of t.split(/\r?\n/).slice(1)) {
     const [h, a] = line.split(",").map(s => (s || "").trim().toLowerCase());
     if (!h) continue; if (/an|ẩn|hide/.test(a)) hide.add(h); if (/ghim|pin/.test(a)) pin.add(h);
@@ -79,50 +83,73 @@ async function overrides() {
   return { hide, pin };
 }
 
+// Tách 1 sản phẩm Shopify thành các mẫu theo màu (đa số brand đã để mỗi màu là 1 sản phẩm riêng)
+function colorItems(p, b, rates) {
+  const opt = n => (p.options || []).findIndex(o => n.test(o.name));
+  const si = opt(/size/i), ci = opt(/colou?r/i);
+  const colors = ci >= 0 ? [...new Set(p.variants.map(v => v["option" + (ci + 1)]))] : [null];
+  const g = groupKey(p, b);
+  return colors.map(col => {
+    const vs = col == null ? p.variants : p.variants.filter(v => v["option" + (ci + 1)] === col);
+    const av = vs.filter(v => v.available); if (!av.length) return null;
+    const sizes = si >= 0 ? p.options[si].values.filter(s => vs.some(v => v["option" + (si + 1)] === s))
+      .map(s => [s, vs.some(v => v.available && v["option" + (si + 1)] === s) ? 1 : 0]) : [];
+    const v = av.reduce((a, c) => (+c.price < +a.price ? c : a), av[0]);
+    const now = priceOf(+v.price, b, rates);
+    const was = +v.compare_at_price > +v.price ? priceOf(+v.compare_at_price, b, rates) : now;
+    let ims = p.images || [];
+    if (colors.length > 1) {
+      const ids = new Set(vs.map(x => x.id));
+      const f = ims.filter(im => (im.variant_ids || []).some(id => ids.has(id)));
+      if (f.length) ims = f;
+    }
+    if (!ims.length) return null;
+    const multi = colors.length > 1;
+    return {
+      id: multi ? `${p.handle}-${String(col).toLowerCase().replace(/[^a-z0-9]+/g, "-")}` : p.handle,
+      g, n: baseTitle(p.title), col: (multi ? col : (col || colorTitle(p.title))) || "", b: b.name, c: b.cat(p),
+      p: now, w: was, s: sizes, i: ims.slice(0, 4).map(im => img(im.src)),
+      t: Date.parse(p.published_at || p.created_at) || 0,
+    };
+  }).filter(Boolean);
+}
+
 async function main() {
   let prev = null; try { prev = JSON.parse(await readFile(OUT, "utf8")); } catch {}
   const live = await vcbRates();
   const rates = live || prev?.rates || CFG.fallbackRates;
   const ov = await overrides().catch(() => ({ hide: new Set(), pin: new Set() }));
-  const out = [], status = {};
+  const out = [], status = {}, cats = {};
   for (const b of BRANDS) {
     try {
+      const best = await allPages(`${b.base}/collections/${b.best}/products.json`);
+      const all = await allPages(`${b.base}/products.json`);
+      const keep = p => (!b.keep || b.keep(p)) && !ov.hide.has(p.handle);
+      // hạng best seller theo kiểu dáng; mọi màu còn hàng của kiểu best seller đều được lấy
       const rank = new Map();
-      if (b.best) { const j = await getJSON(b.base + b.best); (j?.products || []).forEach((p, i) => rank.set(p.handle, i)); }
-      let n = 0;
-      for (let page = 1; page < 60; page++) {
-        const j = await getJSON(`${b.base}/products.json?limit=250&page=${page}`);
-        const ps = j?.products || []; if (!ps.length) break;
-        for (const p of ps) {
-          if (b.keep && !b.keep(p)) continue;
-          if (ov.hide.has(p.handle)) continue;
-          const av = p.variants.filter(v => v.available); if (!av.length || !p.images?.length) continue;
-          const cat = category(p); if (cat === "Accessories" && /gift|voucher/i.test(p.title + p.product_type)) continue;
-          const si = (p.options || []).findIndex(o => /size/i.test(o.name));
-          const sizes = [...new Set(av.map(v => si >= 0 ? v["option" + (si + 1)] : v.option1))].filter(Boolean);
-          const v = av.reduce((a, c) => (+c.price < +a.price ? c : a), av[0]);
-          const now = price(+v.price, b.cur, b.name, rates);
-          const was = +v.compare_at_price > +v.price ? price(+v.compare_at_price, b.cur, b.name, rates) : now;
-          out.push({
-            id: p.handle, n: p.title, b: b.name, c: cat, p: now, w: was,
-            s: sizes, i: [img(p.images[0]?.src), img(p.images[1]?.src || p.images[0]?.src)],
-            r: ov.pin.has(p.handle) ? -1 : (rank.has(p.handle) ? rank.get(p.handle) : 9999),
-            t: Date.parse(p.published_at || p.created_at) || 0,
-          });
-          n++;
+      best.filter(keep).forEach((p, i) => { const g = groupKey(p, b), r = ov.pin.has(p.handle) ? -1 : i;
+        if (!rank.has(g) || r < rank.get(g)) rank.set(g, r); });
+      const seen = new Set(), items = [];
+      for (const p of [...best, ...all]) {
+        if (seen.has(p.handle) || !keep(p)) continue; seen.add(p.handle);
+        if (!rank.has(groupKey(p, b))) continue;
+        for (const it of colorItems(p, b, rates)) {
+          if (it.p > CFG.maxPrice) continue;
+          it.r = rank.get(it.g); items.push(it);
         }
-        await sleep(400);
       }
-      status[b.name] = n;
-      console.log(b.name, n, "mẫu còn hàng");
+      const used = new Set(items.map(i => i.c));
+      cats[b.name] = [...b.cats.filter(c => used.has(c)), ...[...used].filter(c => !b.cats.includes(c)).sort()];
+      out.push(...items); status[b.name] = items.length;
+      console.log(b.name, rank.size, "kiểu best seller,", items.length, "mẫu màu còn hàng <= 8tr");
     } catch (e) {
       console.warn(b.name, "lỗi:", e.message, "-> giữ dữ liệu cũ");
-      const old = (prev?.items || []).filter(x => x.b === b.name);
-      out.push(...old); status[b.name] = "cũ:" + old.length;
+      const old = prev?.v === 2 ? (prev.items || []).filter(x => x.b === b.name) : [];
+      out.push(...old); status[b.name] = "cũ:" + old.length; if (prev?.cats?.[b.name]) cats[b.name] = prev.cats[b.name];
     }
   }
-  const data = { updated: new Date().toISOString(), rates: { AUD: rates.AUD, USD: rates.USD, VND: 1, _at: rates._at || "" },
-    brandSale: CFG.brandSale, status, items: out };
+  const data = { v: 2, updated: new Date().toISOString(), rates: { AUD: rates.AUD, USD: rates.USD, VND: 1, _at: rates._at || "" },
+    brandSale: CFG.brandSale, cats, status, items: out };
   await mkdir(new URL("../public/data/", import.meta.url), { recursive: true });
   await writeFile(OUT, JSON.stringify(data));
   console.log("Tổng:", out.length, "mẫu. Tỉ giá AUD:", rates.AUD, live ? "(VCB mới)" : "(dùng tỉ giá cũ)");
