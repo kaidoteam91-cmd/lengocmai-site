@@ -479,6 +479,8 @@ body.fbv .fab{display:none}
  .steps li .sic{grid-row:1/3;margin:0}.steps h3{align-self:end;margin:6px 0 4px}
  .steps li:not(:last-child)::after,.steps li:nth-child(2)::after{display:block;top:62px;bottom:4px;left:27px;right:auto;border-top:0;border-left:2px dashed var(--line)}}
 .logo{font-weight:700;color:var(--ink);text-shadow:0 1px 0 rgba(0,0,0,.08)}
+.zst{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14px;line-height:1.5}
+.ztxt{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font:400 13px/1.5 Montserrat,sans-serif;background:var(--paper);color:var(--ink);resize:none}
 </style>
 
 
@@ -780,6 +782,18 @@ const fmtPh=d=>String(d).replace(/^(\d{4})(\d{3})(\d{3})$/,"$1 $2 $3");
 function vnPhone(v){let d=String(v||"").replace(/[\s.\-()]/g,"");if(/^\+?84\d{9}$/.test(d))d="0"+d.replace(/^\+?84/,"");if(!/^\d+$/.test(d))return null;
   if(d.length==9&&d[0]!="0")d="0"+d;else if(!(d.length==10&&d[0]=="0"))return null;
   return /^0(3[2-9]|5[25689]|7[06-9]|8[1-9]|9\d)\d{7}$/.test(d)?d:null}
+/* copy ngay trong lần bấm (iPhone Safari cần làm đồng bộ) */
+function copySync(t){let ok=false;try{const a=document.createElement("textarea");a.value=t;a.setAttribute("readonly","");a.style.cssText="position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;font-size:16px";document.body.appendChild(a);a.focus();a.select();a.setSelectionRange(0,t.length);ok=document.execCommand("copy");a.remove()}catch(e){}
+  if(!ok&&navigator.clipboard)navigator.clipboard.writeText(t).catch(()=>{});return ok}
+/* lưu đơn về Google Sheet riêng của Mai (qua Google Form, chỉ chủ form xem được câu trả lời) */
+const ORDER_FORM="https://docs.google.com/forms/d/e/1FAIpQLSfAfGn4vHZKsZOwogajsOYvVKclEGxpwtPPSlak7bR-mrjrtw/formResponse";
+function logOrder(ch){try{const L=CART.map(cline);if(!L.length||!cphone)return;const {t,ask}=ctot(L);
+  const items=L.map((x,k)=>`${k+1}. ${x.n} (${x.b})${x.col?" · Màu "+x.col:""} · Size ${x.s} · SL ${x.q} · ${noP(x.b)?"chờ báo giá":vnd(x.p*x.q)} · ${plink(x)}`).join("\n");
+  const key=ch+"|"+cphone+"|"+items;let sent=[];try{sent=JSON.parse(sessionStorage.getItem("lnm_sent")||"[]")}catch(e){}if(sent.includes(key))return;
+  const f=new URLSearchParams({"entry.659917545":fmtPh(cphone),"entry.1613144625":items,"entry.12831059":vnd(t)+(ask?` (+${ask} chờ báo giá)`:""),"entry.1748751918":ch});
+  let ok=false;try{ok=navigator.sendBeacon&&navigator.sendBeacon(ORDER_FORM,f)}catch(e){}
+  if(!ok)fetch(ORDER_FORM,{method:"POST",mode:"no-cors",body:f,keepalive:true}).catch(()=>{});
+  sent.push(key);try{sessionStorage.setItem("lnm_sent",JSON.stringify(sent.slice(-20)))}catch(e){}}catch(e){}}
 function ctext(L,ph){const n=L.reduce((a,x)=>a+x.q,0),{t,ask}=ctot(L);
   return `Chào Mai, mình muốn đặt ${n} sản phẩm:\n`+L.map((x,k)=>`${k+1}. ${x.n} (${x.b})${x.col?" · Màu "+x.col:""} · Size ${x.s} · SL ${x.q} · ${noP(x.b)?"chờ báo giá":vnd(x.p*x.q)}\n${plink(x)}`).join("\n")+
     `\nTạm tính: ${vnd(t)}${ask?" (chưa gồm mẫu chờ báo giá)":""}\nSĐT của mình: ${ph}`}
@@ -795,8 +809,9 @@ function renderCart(){const P=$("#cpan");if(!P)return;const L=CART.map(cline),n=
   if(!L.length)body=`<div class="cempty"><p style="margin:0">Giỏ hàng đang trống.</p><button class="btn ghost" id="cshop" type="button" style="min-width:220px">XEM MẪU ĐANG SALE</button></div>`;
   else if(cstep=="list"){body=L.map((x,k)=>`<div class="cl"><a href="/sp/${encodeURIComponent(x.id)}" data-cgo aria-label="Xem ${esc(x.n)}"><img src="${esc(im(x.img,200))}" alt="" loading="lazy"></a><div><b>${esc(x.n)}</b><small>${esc(x.b)}${x.col?" · "+esc(x.col):""} · Size ${esc(x.s)}</small>${x.so?`<small class="cso">Màu này vừa hết hàng online, Mai sẽ báo lại</small>`:""}<div class="cp">${noP(x.b)?"Liên hệ báo giá":vnd(x.p*x.q)}</div><div class="qty"><button type="button" data-q="${k}" data-d="-1" aria-label="Bớt 1">−</button><span>${x.q}</span><button type="button" data-q="${k}" data-d="1" aria-label="Thêm 1">+</button></div></div><button class="crm" type="button" data-rm="${k}">Xoá</button></div>`).join("");
     ft=`<div class="ctot"><span>Tạm tính</span><b>${vnd(t)}</b></div>${ask?`<p class="cnote">Chưa gồm ${ask} sản phẩm chờ Mai báo giá.</p>`:""}<button class="btn main" id="csend" type="button">GỬI ĐƠN CHO MAI</button><p class="cnote">Giỏ hàng chỉ lưu trên trình duyệt này. Đổi máy hoặc mở trình duyệt khác sẽ không thấy giỏ cũ.</p>`}
-  else if(cstep=="phone")body=`<form class="cform" id="cform" novalidate><label for="cph">Điền số điện thoại của bạn để tiện cho việc chăm sóc khách hàng</label><input id="cph" type="tel" inputmode="tel" autocomplete="tel" placeholder="VD: 0981 234 567" maxlength="16" value="${esc(cphone||lsGet(PK,""))}"><p class="cerr" id="cerr" role="alert"></p><button class="btn main" type="submit">TIẾP TỤC</button><p class="cnote">Số điện thoại chỉ gửi kèm đơn cho Mai để tư vấn và giữ hàng, không chia sẻ cho ai khác.</p><button class="lnk" type="button" id="cbackl">‹ Quay lại giỏ hàng</button></form>`;
-  else body=`<div class="cform"><p class="csum">${n} sản phẩm · Tạm tính <b>${vnd(t)}</b>${ask?" (chưa gồm mẫu chờ báo giá)":""}<br>SĐT: ${esc(fmtPh(cphone))}</p><div class="lbl" style="margin:0">GỬI ĐƠN QUA</div><div class="row2"><button class="opt" id="czalo" type="button">${CZL}<span>Zalo</span></button><a class="opt" id="cmess" href="https://m.me/${CONFIG.messenger}?text=${encodeURIComponent(ctext(L,fmtPh(cphone)))}" target="_blank" rel="noopener">${CMS}<span>Messenger</span></a></div><p class="cnote">Chọn Zalo: đơn hàng được copy sẵn, bạn chỉ cần dán vào khung chat với Mai rồi gửi.</p><button class="lnk" type="button" id="cbackp">‹ Sửa số điện thoại</button></div>`;
+  else if(cstep=="phone")body=`<form class="cform" id="cform" novalidate><label for="cph">Điền số điện thoại của bạn để tiện cho việc chăm sóc khách hàng</label><input id="cph" type="tel" inputmode="tel" autocomplete="tel" placeholder="VD: 09xx 345 678" maxlength="16" value="${esc(cphone||lsGet(PK,""))}"><p class="cerr" id="cerr" role="alert"></p><button class="btn main" type="submit">TIẾP TỤC</button><p class="cnote">Số điện thoại chỉ gửi kèm đơn cho Mai để tư vấn và giữ hàng, không chia sẻ cho ai khác.</p><button class="lnk" type="button" id="cbackl">‹ Quay lại giỏ hàng</button></form>`;
+  else if(cstep=="zalo")body=`<div class="cform"><p class="csum"><b style="color:#1a7f37">✓ Đã copy đơn hàng</b></p><ol class="zst"><li>Bấm <b>MỞ ZALO CỦA MAI</b> bên dưới.</li><li>Trong khung chat với Mai, <b>giữ ngón tay vào ô nhập tin</b> rồi chọn <b>Dán</b>.</li><li>Bấm gửi. Mai sẽ báo lại sớm nhất.</li></ol><a class="btn main" id="czopen" href="https://zalo.me/${CONFIG.zalo}" target="_blank" rel="noopener">MỞ ZALO CỦA MAI</a><p class="cnote">Nếu dán không ra chữ, bấm vào khung dưới để chọn toàn bộ và copy lại:</p><textarea class="ztxt" id="ztxt" readonly rows="6">${esc(ctext(L,fmtPh(cphone)))}</textarea><button class="btn ghost" type="button" id="czcopy">COPY LẠI ĐƠN HÀNG</button><button class="lnk" type="button" id="cbacks">‹ Chọn cách gửi khác</button></div>`;
+  else body=`<div class="cform"><p class="csum">${n} sản phẩm · Tạm tính <b>${vnd(t)}</b>${ask?" (chưa gồm mẫu chờ báo giá)":""}<br>SĐT: ${esc(fmtPh(cphone))}</p><div class="lbl" style="margin:0">GỬI ĐƠN QUA</div><div class="row2"><button class="opt" id="czalo" type="button">${CZL}<span>Zalo</span></button><a class="opt" id="cmess" href="https://m.me/${CONFIG.messenger}?text=${encodeURIComponent(ctext(L,fmtPh(cphone)))}" target="_blank" rel="noopener">${CMS}<span>Messenger</span></a></div><p class="cnote">Messenger: đơn hàng được điền sẵn vào tin nhắn. Zalo: đơn được copy sẵn, bạn dán vào chat với Mai.</p><button class="lnk" type="button" id="cbackp">‹ Sửa số điện thoại</button></div>`;
   P.innerHTML=hd+`<div class="cbody">${body}</div>`+(ft?`<div class="cft">${ft}</div>`:"")}
 function openCart(){cstep="list";renderCart();$("#cart").classList.add("open");document.body.style.overflow="hidden"}
 function closeCart(){$("#cart").classList.remove("open");document.body.style.overflow=$("#dlg").classList.contains("open")?"hidden":""}
@@ -813,10 +828,14 @@ document.addEventListener("click",async e=>{const t=e.target,stop=()=>e.stopProp
   if(t.closest("#csend")){cstep="phone";renderCart();const i=$("#cph");if(i&&matchMedia("(hover:hover)").matches)i.focus();return}
   if(t.closest("#cbackl")){cstep="list";renderCart();return}
   if(t.closest("#cbackp")){cstep="phone";renderCart();return}
-  if(t.closest("#czalo")){const ok=await copy(ctext(CART.map(cline),fmtPh(cphone)));toast(ok?"Đã copy đơn hàng, dán vào Zalo gửi Mai nhé":"Mở Zalo: "+CONFIG.zalo);setTimeout(()=>{location.href="https://zalo.me/"+CONFIG.zalo},ok?900:0);return}
+  if(t.closest("#czalo")){const tx=ctext(CART.map(cline),fmtPh(cphone));copySync(tx);logOrder("Zalo");cstep="zalo";renderCart();return}
+  if(t.closest("#czcopy")){const a=$("#ztxt");copySync(a.value);a.focus();a.select();toast("Đã copy lại đơn hàng");return}
+  if(t.closest("#ztxt")){const a=$("#ztxt");a.select();a.setSelectionRange(0,a.value.length);return}
+  if(t.closest("#cbacks")){cstep="send";renderCart();return}
+  if(t.closest("#cmess")){logOrder("Messenger");return}
 },true);
 document.addEventListener("submit",e=>{if(e.target.id!="cform")return;e.preventDefault();const i=$("#cph"),v=i.value.trim(),d=vnPhone(v);
-  if(!d){i.setAttribute("aria-invalid","true");$("#cerr").textContent=v?"Số chưa đúng. Nhập số di động Việt Nam: 10 số bắt đầu bằng 0 (VD 0981 234 567), hoặc 9 số nếu bỏ số 0 đầu.":"Bạn điền số điện thoại nhé.";i.focus();return}
+  if(!d){i.setAttribute("aria-invalid","true");$("#cerr").textContent=v?"Số chưa đúng. Nhập số di động Việt Nam: 10 số bắt đầu bằng 0 (VD 09xx 345 678), hoặc 9 số nếu bỏ số 0 đầu.":"Bạn điền số điện thoại nhé.";i.focus();return}
   cphone=d;lsSet(PK,d);cstep="send";renderCart()});
 document.addEventListener("input",e=>{if(e.target.id=="cph"){e.target.removeAttribute("aria-invalid");const c=$("#cerr");if(c)c.textContent=""}});
 addEventListener("keydown",e=>{if(e.key=="Escape"&&$("#cart").classList.contains("open")){e.stopImmediatePropagation();closeCart()}},true);
