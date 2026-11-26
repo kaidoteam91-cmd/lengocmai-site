@@ -277,6 +277,14 @@ footer{border-top:1px solid var(--line);padding-block:40px calc(32px + env(safe-
 .cols button img{width:100%;height:100%;object-fit:cover;display:block}
 .cols button[aria-pressed=true]{border:2px solid var(--ink)}
 .lv{font-weight:500;letter-spacing:.04em;text-transform:none}.lh{font-weight:400;color:var(--soft);letter-spacing:.02em;text-transform:none}
+.cols{margin-top:2px}.cgl{font-size:12px;letter-spacing:.04em;margin:14px 0 8px;color:var(--ink)}.cgl:first-child{margin-top:0}.cgl b{font-weight:600}.cgl span{color:var(--soft)}
+.cols button.so{position:relative;opacity:.55}.cols button.so::after,.sw.so::after{content:"";position:absolute;inset:0;background:linear-gradient(to top right,transparent calc(50% - 1px),var(--ink) calc(50% - 1px),var(--ink) calc(50% + 1px),transparent calc(50% + 1px))}
+.cols button.so[aria-pressed=true]{opacity:1}.sw{position:relative}.sw.so{opacity:.5}
+.sold{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;letter-spacing:.06em;margin:4px 0 2px}.sold::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--red,#d0021b)}
+.cardso{font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--red,#d0021b)}
+.ask{font-size:15px;font-weight:600;letter-spacing:.04em}
+.szg{margin-top:12px}.szg summary{cursor:pointer;font-size:12px;letter-spacing:.06em;text-decoration:underline;text-underline-offset:3px;list-style:none;display:inline-block}.szg summary::-webkit-details-marker{display:none}
+.szw{overflow-x:auto;margin-top:10px;-webkit-overflow-scrolling:touch}.szt{border-collapse:collapse;font-size:12px;min-width:100%;white-space:nowrap}.szt th,.szt td{border:1px solid var(--line);padding:7px 9px;text-align:center}.szt th{background:var(--paper);font-weight:600}.szt tr.me td{background:var(--paper);font-weight:600}.szn{font-size:11px;color:var(--soft);margin-top:6px;line-height:1.5}
 .sizes button.na{color:var(--strike);text-decoration:line-through;background:var(--paper);cursor:not-allowed;border-color:var(--line)}
 .tile.sk{background:linear-gradient(110deg,#1b1b1b 30%,#2a2a2a 50%,#1b1b1b 70%);background-size:200% 100%;animation:rise 1s var(--ease) forwards,shim 1.4s linear infinite}
 @keyframes shim{to{background-position:-200% 0}}
@@ -389,6 +397,16 @@ const toVND=(p,cur,b)=>{const r=CONFIG.rates[cur]??CONFIG.rates.VND,m=CONFIG.bra
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const vnd=n=>Number(n).toLocaleString("vi-VN")+"₫";
+let RATE_OK=true;const AUDB=new Set(["Lioness","I.AM.GIA"]);const noP=b=>!RATE_OK&&AUDB.has(b);
+const priceH=(b,now,was,pct,big)=>noP(b)?`<span class="ask">Liên hệ báo giá</span>`:`<span class="now">${vnd(now)}</span>${pct?`<span class="was">${vnd(was)}</span>`+(big?`<span class="tag" style="position:static;background:none;padding:0">−${pct}%</span>`:""):""}`;
+const SZ={
+  "Lioness":{src:"lionessfashion.com",h:["Size","AU","US","Ngực","Eo","Hông"],r:[["XXS","4","0",77.5,58.5,86.5],["XS","6","2",80,61,89],["S","8","4",85,66,94],["M","10","6",90,71,99],["L","12","8",95,76,104],["XL","14","10",100,81,109],["XXL","16","12",105,86,114]]},
+  "I.AM.GIA":{src:"iamgia.com",h:["Size","AU","US","Ngực","Eo","Hông"],r:[["XXS","4","0",80,61,89],["XS","6","2",83,64,92],["S","8","4",86,67,95],["M","10","6",91,72,100],["L","12","8",96,77,105],["XL","14","10",101,82,110]],
+    shoe:{h:["EU","AU / US","UK","Dài bàn chân"],r:[["36","5","3","23,2"],["37","6","4","23,8"],["38","7","5","24,5"],["39","8","6","25,2"],["40","9","7","25,8"],["41","10","8","26,5"],["42","11","9","27,1"]]}},
+  "Alo Yoga":{src:"aloyoga.com",h:["Size","US","Ngực","Eo","Hông"],r:[["XXS","00–0","76–81,5","59,5–62","84–86,5"],["XS","2–4","81,5–86,5","63,5–67,5","87,5–91,5"],["S","4–6","86,5–91,5","68,5–72,5","92,5–96,5"],["M","8–10","91,5–96,5","73,5–77,5","98–101,5"],["L","12–14","96,5–101,5","78,5–85","103–108"],["XL","16–18","101,5–108","86,5–92,5","109–115,5"],["2XL","20–22","108–115,5","94–101,5","117–124,5"]]}};
+function sizeGuide(b,c){const g=SZ[b];if(!g||!c.sizes.some(s=>!/one ?size|^os$/i.test(s.l)))return "";const L=new Set(c.sizes.filter(s=>s.a).map(s=>s.l));const shoe=g.shoe&&c.sizes.some(s=>/^\d+$/.test(s.l));const t=shoe?g.shoe:g;
+  const f=v=>typeof v=="number"?String(v).replace(".",","):v;
+  return `<details class="szg"><summary>BẢNG SIZE ${shoe?"GIÀY ":""}QUY ĐỔI AU / US</summary><div class="szw"><table class="szt"><thead><tr>${t.h.map(x=>`<th>${x}</th>`).join("")}</tr></thead><tbody>${t.r.map(r=>`<tr class="${L.has(r[0])?"me":""}">${r.map(v=>`<td>${f(v)}</td>`).join("")}</tr>`).join("")}</tbody></table></div><div class="szn">Số đo cơ thể theo cm, lấy từ bảng size của ${g.src}. Dòng tô đậm là size màu này còn hàng. Phân vân giữa 2 size thì nhắn Mai tư vấn nhé.</div></details>`}
 const slug=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/đ/gi,"d").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 
 /* Ảnh tạm: vẽ dáng trang phục bằng SVG */
@@ -418,10 +436,12 @@ const ex=u=>!u?"":u[0]=="~"?CDN+u.slice(1):u.startsWith("//")?"https:"+u:u;
 const im=(u,w)=>isCdn(u)?u+"?width="+w:u;
 const sset=u=>isCdn(u)?[360,540,720,960].map(w=>`${u}?width=${w} ${w}w`).join(","):"";
 const fbOf=(cat,k)=>art(CTYPE[cat]||"top","#bfae9c",k);
-function colorOf(x){return {id:x.id,col:x.col||"",now:x.p,was:x.w,pct:x.w>x.p?Math.round((1-x.p/x.w)*100):0,
+function colorOf(x){return {id:x.id,col:x.col||"",so:!!x.so,cg:x.cg||"",now:x.p,was:x.w,pct:x.w>x.p?Math.round((1-x.p/x.w)*100):0,
   sizes:(x.s||[]).map(s=>Array.isArray(s)?{l:s[0],a:!!s[1]}:{l:String(s),a:true}),imgs:(x.i||[]).map(ex).filter(Boolean),r:x.r??9999,t:x.t||0}}
 function groupItems(arr){const m=new Map();for(const x of arr){const k=x.g||x.id;if(!m.has(k))m.set(k,{id:x.id,g:k,name:x.n,brand:x.b,cat:x.c,colors:[]});const G=m.get(k);if(!G.colors.some(c=>c.id==x.id))G.colors.push(colorOf(x))}
-  return [...m.values()].map(G=>{const c=G.colors[0];G.r=Math.min(...G.colors.map(c=>c.r));G.t=Math.max(...G.colors.map(c=>c.t));G.now=c.now;G.was=c.was;G.pct=c.pct;
+  return [...m.values()].map(G=>{if(G.colors.some(c=>c.cg)){const o={Core:0,Limited:1};G.colors.sort((a,b)=>(o[a.cg]??0)-(o[b.cg]??0))}
+    const fa=G.colors.findIndex(c=>!c.so);if(fa>0)G.colors.unshift(...G.colors.splice(fa,1));
+    G.so=G.colors.every(c=>c.so);const c=G.colors[0];G.r=Math.min(...G.colors.map(c=>c.r));G.t=Math.max(...G.colors.map(c=>c.t));G.now=c.now;G.was=c.was;G.pct=c.pct;
     G.find=(G.name+" "+G.colors.map(c=>c.col).join(" ")).toLowerCase();return G})}
 const fromSample=i=>({id:i.id,g:i.id,name:i.name,brand:i.brand,cat:i.cat,now:i.now,was:i.was,pct:i.pct,r:9999,t:0,find:i.name.toLowerCase(),
   colors:[{id:i.id,col:"",now:i.now,was:i.was,pct:i.pct,sizes:i.sizes.map(l=>({l,a:true})),imgs:[i.img1,i.img2]}]});
@@ -467,10 +487,10 @@ function showView(b){
 }
 function card(i,k){const c=i.colors[0],a=gimg(i,0),b=c.imgs[1]||a,n=i.colors.length,av=c.sizes.filter(s=>s.a).map(s=>s.l),eager=k<4;
   return `<article class="card" data-id="${esc(c.id)}">
-    <div class="ph"><img src="${esc(im(a,540))}" srcset="${esc(sset(a))}" sizes="(min-width:1280px) 20vw,(min-width:761px) 31vw,48vw" data-fb="${esc(fbOf(i.cat,0))}" alt="${esc(i.name)}" ${eager?'fetchpriority="high"':'loading="lazy"'} decoding="async"><img src="${esc(im(b,540))}" srcset="${esc(sset(b))}" sizes="(min-width:1280px) 20vw,(min-width:761px) 31vw,48vw" data-fb="${esc(fbOf(i.cat,1))}" alt="" loading="lazy" decoding="async">${i.pct?`<span class="tag">−${i.pct}%</span>`:""}<span class="view">XEM CHI TIẾT</span></div>
+    <div class="ph"><img src="${esc(im(a,540))}" srcset="${esc(sset(a))}" sizes="(min-width:1280px) 20vw,(min-width:761px) 31vw,48vw" data-fb="${esc(fbOf(i.cat,0))}" alt="${esc(i.name)}" ${eager?'fetchpriority="high"':'loading="lazy"'} decoding="async"><img src="${esc(im(b,540))}" srcset="${esc(sset(b))}" sizes="(min-width:1280px) 20vw,(min-width:761px) 31vw,48vw" data-fb="${esc(fbOf(i.cat,1))}" alt="" loading="lazy" decoding="async">${i.pct&&!noP(i.brand)?`<span class="tag">−${i.pct}%</span>`:""}<span class="view">XEM CHI TIẾT</span></div>
     <div class="meta"><div class="brand">${esc(i.cat.toUpperCase())}</div><h3 class="name serif">${esc(i.name)}</h3>
-    <div class="price"><span class="now">${vnd(i.now)}</span>${i.pct?`<span class="was">${vnd(i.was)}</span>`:""}</div>
-    ${n>1?`<div class="sws">${i.colors.slice(0,5).map((x,q)=>`<span class="sw${q?"":" on"}" data-k="${q}" title="${esc(x.col)}"><img src="${esc(im(x.imgs[0],80))}" alt="" loading="lazy"></span>`).join("")}${n>5?`<small>+${n-5}</small>`:""}<small>${n} màu</small></div>`:c.col?`<div class="sz">${esc(c.col)}</div>`:""}
+    <div class="price">${priceH(i.brand,i.now,i.was,i.pct)}</div>
+    ${n>1?`<div class="sws">${i.colors.slice(0,5).map((x,q)=>`<span class="sw${q?"":" on"}${x.so?" so":""}" data-k="${q}" title="${esc(x.col)}"><img src="${esc(im(x.imgs[0],80))}" alt="" loading="lazy"></span>`).join("")}${n>5?`<small>+${n-5}</small>`:""}<small>${n} màu</small></div>`:c.col?`<div class="sz">${esc(c.col)}</div>`:""}
     ${av.length?`<div class="sz">Size ${esc(av.join(" · "))}</div>`:""}</div></article>`}
 function renderGrid(){
   const qq=q.trim().toLowerCase();
@@ -491,19 +511,26 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.targ
 
 const plink=i=>(CONFIG.siteUrl||location.origin+location.pathname)+"#sp-"+encodeURIComponent(i.id);
 function msg(i){return plink(i)}
+function colorsH(G,c){if(!(G.colors.length>1||c.col))return "";
+  const btn=x=>`<button data-col="${esc(x.id)}" class="${x.so?"so":""}" aria-pressed="${x.id==c.id}" title="${esc(x.col)}${x.so?" (hết hàng)":""}" aria-label="${esc(x.col)}${x.so?" hết hàng":""}"><img src="${esc(im(x.imgs[0],160))}" alt="" loading="lazy"></button>`;
+  const many=G.colors.length>1,grp=many&&G.colors.some(x=>x.cg=="Limited");
+  if(grp){const gs=["Core","Limited"].map(k=>[k,G.colors.filter(x=>(x.cg||"Core")==k)]).filter(g=>g[1].length);
+    return `<div>${gs.map(([k,xs])=>`<div class="cgl"><b>${k}</b>${xs.some(x=>x.id==c.id)?`: <span>${esc(c.col)}</span>`:""}</div><div class="cols">${xs.map(btn).join("")}</div>`).join("")}</div>`}
+  return `<div><div class="lbl">MÀU: <span class="lv">${esc(c.col||"")}</span>${many?` <span class="lh">(${G.colors.length} màu${G.colors.some(x=>x.so)?", gạch chéo là đã hết":""})</span>`:""}</div>${many?`<div class="cols">${G.colors.map(btn).join("")}</div>`:""}</div>`}
 function findColor(id){for(const G of items){const c=G.colors.find(c=>c.id==id);if(c)return [G,c]}return []}
 function openItem(id,push){
   const [G,c]=findColor(id);if(!G)return;const keep=$("#dlg").classList.contains("open")&&cur&&cur.G==G;
-  cur={...c,name:G.name,brand:G.brand,G};const avs=c.sizes.filter(s=>s.a);pick=avs.length==1?avs[0].l:null;
+  cur={...c,name:G.name,brand:G.brand,G};const avs=c.so?[]:c.sizes.filter(s=>s.a);pick=avs.length==1?avs[0].l:null;
   const ZL='<svg viewBox="0 0 48 48" width="28" height="28" aria-hidden="true"><rect width="48" height="48" rx="12" fill="#0068FF"/><text x="24" y="30" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="14" fill="#fff">Zalo</text></svg>';
   const MS='<svg viewBox="0 0 48 48" width="28" height="28" aria-hidden="true"><defs><linearGradient id="mg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#0099FF"/><stop offset=".6" stop-color="#A033FF"/><stop offset="1" stop-color="#FF5280"/></linearGradient></defs><path d="M24 4C12.7 4 4 12.3 4 23.5c0 5.9 2.4 11 6.4 14.5v6l5.8-3.2c2.4.7 5 1.1 7.8 1.1 11.3 0 20-8.3 20-19.5S35.3 4 24 4z" fill="url(#mg)"/><path d="M12 29l7.4-11.7 5.9 4.4 6.2-4.4L36 18l-7.4 11.7-5.9-4.4-6.2 4.4z" fill="#fff"/></svg>';
   const ims=c.imgs.length?c.imgs:[fbOf(G.cat,0),fbOf(G.cat,1)];
   $("#box").innerHTML=`<div class="galw"><div class="gal" id="gal">${ims.map((u,k)=>`<img src="${esc(im(u,960))}" srcset="${esc(sset(u))}" sizes="(min-width:761px) 50vw,100vw" data-fb="${esc(fbOf(G.cat,k%2))}" alt="${k?"":esc(G.name)}" ${k?'loading="lazy"':""} decoding="async">`).join("")}</div><div class="dots" aria-hidden="true">${ims.map((_,k)=>`<i${k?"":' class="on"'}></i>`).join("")}</div></div>
   <div class="info"><button class="x" id="x" aria-label="Đóng"><svg width="16" height="16" viewBox="0 0 16 16" stroke="currentColor" stroke-width="1.2"><path d="M2 2l12 12M14 2L2 14"/></svg></button>
     <div class="brand">${esc(G.brand.toUpperCase())} · ${esc(G.cat)}</div><h2 class="serif">${esc(G.name)}</h2>
-    <div class="price"><span class="now">${vnd(c.now)}</span>${c.pct?`<span class="was">${vnd(c.was)}</span><span class="tag" style="position:static;background:none;padding:0">−${c.pct}%</span>`:""}</div>
-    ${G.colors.length>1||c.col?`<div><div class="lbl">MÀU: <span class="lv">${esc(c.col||"")}</span>${G.colors.length>1?` <span class="lh">(${G.colors.length} màu)</span>`:""}</div>${G.colors.length>1?`<div class="cols">${G.colors.map(x=>`<button data-col="${esc(x.id)}" aria-pressed="${x.id==c.id}" title="${esc(x.col)}" aria-label="${esc(x.col)}"><img src="${esc(im(x.imgs[0],160))}" alt="" loading="lazy"></button>`).join("")}</div>`:""}</div>`:""}
-    ${c.sizes.length?`<div><div class="lbl">SIZE <span class="lh">(gạch ngang là đã hết)</span></div><div class="sizes">${c.sizes.map(s=>s.a?`<button data-s="${esc(s.l)}" aria-pressed="${s.l==pick}">${esc(s.l)}</button>`:`<button class="na" disabled aria-label="${esc(s.l)} hết hàng">${esc(s.l)}</button>`).join("")}</div></div>`:`<div><div class="lbl">SIZE</div><div class="sizes"><button aria-pressed="true">One size</button></div></div>`}
+    <div class="price">${priceH(G.brand,c.now,c.was,c.pct,1)}</div>
+    ${colorsH(G,c)}
+    ${c.so?`<div class="sold">HẾT HÀNG ONLINE</div>`:""}
+    ${c.sizes.length?`<div><div class="lbl">SIZE <span class="lh">(gạch ngang là đã hết)</span></div><div class="sizes">${c.sizes.map(s=>s.a?`<button data-s="${esc(s.l)}" aria-pressed="${s.l==pick}">${esc(s.l)}</button>`:`<button class="na" disabled aria-label="${esc(s.l)} hết hàng">${esc(s.l)}</button>`).join("")}</div>${sizeGuide(G.brand,c)}</div>`:`<div><div class="lbl">SIZE</div><div class="sizes"><button aria-pressed="${!c.so}"${c.so?' class="na" disabled':""}>One size</button></div></div>`}
     <div class="row2 acts"><button class="btn main" id="contact" aria-expanded="false"><span>LIÊN HỆ</span></button><button class="btn ghost" id="copy"><span>COPY LINK MẪU</span></button></div>
     <div class="pick" id="pick" hidden><div class="lbl" style="margin:0">NHẮN MAI QUA</div>
       <div class="row2"><button class="opt" id="zalo">${ZL}<span>Zalo</span></button><a class="opt" id="mess" href="#">${MS}<span>Messenger</span></a></div></div>
@@ -560,6 +587,7 @@ const ok=d=>d&&d.items&&d.items.length?d:null;
 if(CONFIG.dataUrl||CONFIG.githubRepo){(CONFIG.githubRepo?getData(`https://raw.githubusercontent.com/${CONFIG.githubRepo}/data/products.json`):Promise.resolve(null)).then(d=>ok(d)||getData(CONFIG.dataUrl).then(ok)).then(d=>{
   if(!d){items=SAMPLE.map(norm).map(fromSample);brand=null;boot();return}
   if(d.brandSale)Object.assign(CONFIG.brandSale,d.brandSale);DCATS=d.cats||{};
+  RATE_OK=d.rateOk!==false&&!(d.rateGoodAt&&Date.now()-Date.parse(d.rateGoodAt)>72*36e5);
   items=groupItems(d.items);live=true;brand=null;boot()})}
 if(CONFIG.ratesCsv){fetch(CONFIG.ratesCsv).then(r=>r.text()).then(t=>{parseCSV(t).forEach(([c,v])=>{const x=parseFloat(String(v).replace(/,/g,""));if(c&&x)CONFIG.rates[c.trim().toUpperCase()]=x});items=SAMPLE.map(norm).map(fromSample);boot()}).catch(()=>{})}
 if(CONFIG.sheetCsv){fetch(CONFIG.sheetCsv).then(r=>r.text()).then(t=>{const rows=parseCSV(t).slice(1).filter(r=>r[0]&&r[3]);if(rows.length){items=rows.map(norm).map(fromSample);boot()}}).catch(()=>{})}
