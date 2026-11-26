@@ -156,7 +156,7 @@ async function main() {
     try {
       const best = await allPages(`${b.base}/collections/${b.best}/products.json`);
       const all = await allPages(`${b.base}/products.json`);
-      const keep = p => (!b.keep || b.keep(p)) && !ov.hide.has(p.handle);
+      const keep = p => (!b.keep || b.keep(p)) && !ov.hide.has(p.handle) && !/gift ?card|e-?voucher/i.test((p.product_type || "") + " " + p.title);
       // Best Seller = đúng các sản phẩm trong collection best seller của web gốc (thứ tự giữ nguyên).
       // Thứ tự "Nổi bật": kiểu có màu best seller lên trước theo hạng, còn lại xếp sau (mới nhất trước).
       const bsRank = new Map(); best.filter(keep).forEach((p, i) => { if (!bsRank.has(p.handle)) bsRank.set(p.handle, i); });
