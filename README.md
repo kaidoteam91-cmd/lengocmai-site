@@ -6,9 +6,9 @@ Trang showcase hàng sale của 3 brand: Lioness, I.AM.GIA, Alo Yoga. Khách b�
 - `public/` là toàn bộ trang web (Cloudflare Pages đăng thư mục này).
   - `index.html`: giao diện. Phần `CONFIG` ở đầu script là chỗ chỉnh Zalo, Messenger, ngày kết thúc sale.
   - `data/products.json`: dữ liệu sản phẩm, do chương trình đồng bộ tạo ra.
-- `scripts/sync.mjs`: chương trình đồng bộ. Nó lấy mọi mẫu còn hàng của 3 web brand, tỉ giá bán Vietcombank, rồi tính giá:
+- `scripts/sync.mjs`: chương trình đồng bộ. Nó chỉ lấy các kiểu best seller của 3 web brand (Lioness: Best Sellers, I.AM.GIA: Most Wanted, Alo: Bestsellers đồ nữ), mọi màu còn hàng của kiểu đó, giá hiển thị từ 8 triệu trở xuống. Danh mục, màu, size lấy nguyên từ web gốc. Giá tính:
   - Lioness, I.AM.GIA: giá AUD × tỉ giá bán VCB × 1.07 + 550.000đ, làm tròn lên bội số 50.000đ.
-  - Alo Yoga: giá VND + 550.000đ, làm tròn lên bội số 50.000đ.
+  - Alo Yoga: giá web VND + 550.000đ (giữ nguyên, không làm tròn).
   - % sale hiện ở ô brand chỉnh tay trong `CFG.brandSale` (đầu file).
 - `.github/workflows/sync.yml`: GitHub tự chạy đồng bộ mỗi tiếng một lần và để dữ liệu mới nhất ở nhánh `data` của repo. Web đọc thẳng file đó nên không cần Cloudflare build lại (Cloudflare miễn phí chỉ cho 500 lần build/tháng).
 
