@@ -21,9 +21,9 @@ jobs:
           OVERRIDES_CSV: ${{ vars.OVERRIDES_CSV }}
       - name: Đẩy dữ liệu lên nhánh "data" (chỉ giữ bản mới nhất, không làm phình repo, không bắt Cloudflare build lại)
         run: |
-          mkdir out && cp public/data/products.json out/ && cd out
+          mkdir out && cp public/data/*.json out/ && cd out
           git init -q -b data
           git -c user.name=sync-bot -c user.email=sync-bot@users.noreply.github.com commit -q --allow-empty -m "Dữ liệu $(date -u +%FT%H:%MZ)"
-          git add products.json
+          git add *.json
           git -c user.name=sync-bot -c user.email=sync-bot@users.noreply.github.com commit -q --amend -m "Dữ liệu $(date -u +%FT%H:%MZ)"
           git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" data
