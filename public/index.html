@@ -320,29 +320,30 @@ body.fbv .fab{display:none}
 .fempty{padding:60px 0;text-align:center;color:var(--soft)}
 @media(max-width:760px){.fgrid{columns:2;column-gap:8px}.fcard{margin-bottom:8px}.fcard .fl{padding:8px;font-size:11px}}
 /* ===== Giáng sinh v2: banner cây thông, nón Noel, tuyết phủ ===== */
-.xhero{position:relative;overflow:hidden;color:#fff;background:radial-gradient(120% 90% at 78% 10%,#1d6b45 0%,#0d3f2a 45%,#07261a 100%);border-radius:0;margin:0 0 clamp(28px,4vw,48px)}
-.xhero::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.9;background-image:radial-gradient(2px 2px at 20px 30px,#fff 50%,transparent 51%),radial-gradient(1.5px 1.5px at 70px 90px,#fff 50%,transparent 51%),radial-gradient(2.5px 2.5px at 130px 50px,#fff 50%,transparent 51%),radial-gradient(1.5px 1.5px at 170px 140px,#fff 50%,transparent 51%),radial-gradient(2px 2px at 40px 160px,#fff 50%,transparent 51%),radial-gradient(1px 1px at 110px 120px,#fff 50%,transparent 51%);background-size:200px 200px}
-.xhero::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:clamp(34px,5vw,64px);background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 80' preserveAspectRatio='none'%3E%3Cpath d='M0 40C120 10 220 60 360 34S600 6 760 38 1020 70 1200 30V80H0z' fill='%23fff'/%3E%3Cpath d='M0 58C160 40 300 76 480 56S820 36 1000 60 1140 64 1200 52V80H0z' fill='%23eef3f7'/%3E%3C/svg%3E") bottom/100% 100% no-repeat;pointer-events:none}
-.xin{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);align-items:center;gap:clamp(16px,3vw,48px);padding:clamp(36px,5vw,72px) clamp(20px,4vw,64px) clamp(52px,7vw,96px)}
-.xk{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.16em;color:#f3d27a;margin:0 0 14px}
-.xhero h2{margin:0;font-size:clamp(38px,6.4vw,92px);line-height:.92;font-weight:800;text-transform:uppercase;letter-spacing:-.015em;text-shadow:0 4px 24px rgba(0,0,0,.25)}
-.xhero h2 em{font-style:normal;color:#ff4d5e;display:block}
-.xhero p{margin:16px 0 0;max-width:30em;color:#d9e8df;font-size:clamp(14px,1.3vw,17px)}
-.xbtns{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
-.xbtn{display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 24px;border-radius:99px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;background:var(--red);color:#fff;box-shadow:0 8px 24px rgba(208,2,27,.4);transition:transform .2s}
-.xbtn:hover{transform:translateY(-2px)}.xbtn.g2{background:#fff;color:#0d3f2a;box-shadow:none}
-.xtags{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.xtags span{font-size:11px;font-weight:600;letter-spacing:.06em;padding:6px 10px;border:1px solid rgba(255,255,255,.28);border-radius:99px;color:#e9f3ed}
-.xart{position:relative;justify-self:center;width:min(100%,380px)}
-.xart svg{display:block;width:100%;height:auto;filter:drop-shadow(0 14px 30px rgba(0,0,0,.35))}
-.xart .lt{animation:tw 1.6s ease-in-out infinite alternate}.xart .lt:nth-of-type(3n){animation-delay:.5s}.xart .lt:nth-of-type(3n+1){animation-delay:1s}
+/* ===== Giáng sinh v3: khu chọn brand là cảnh Noel ===== */
+.home{position:relative;overflow:hidden;color:#fff;background:radial-gradient(90% 70% at 85% 0%,#1d6b45 0%,#0d3f2a 50%,#07261a 100%);padding-block:clamp(58px,6vw,84px) clamp(54px,6vw,88px)}
+.home::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.8;background-image:radial-gradient(2px 2px at 20px 30px,#fff 50%,transparent 51%),radial-gradient(1.5px 1.5px at 70px 90px,#fff 50%,transparent 51%),radial-gradient(2.5px 2.5px at 130px 50px,#fff 50%,transparent 51%),radial-gradient(1.5px 1.5px at 170px 140px,#fff 50%,transparent 51%),radial-gradient(2px 2px at 40px 160px,#fff 50%,transparent 51%),radial-gradient(1px 1px at 110px 120px,#fff 50%,transparent 51%);background-size:200px 200px}
+.home::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:clamp(28px,4vw,52px);pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 80' preserveAspectRatio='none'%3E%3Cpath d='M0 40C120 10 220 60 360 34S600 6 760 38 1020 70 1200 30V80H0z' fill='%23fff'/%3E%3C/svg%3E") bottom/100% 100% no-repeat}
+.home>.w{position:relative;z-index:1}
+.home>.w::before{content:"";position:absolute;left:calc(-1*max(4vw,16px));right:calc(-1*max(4vw,16px));top:calc(-1*clamp(58px,6vw,84px));height:56px;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='56' viewBox='0 0 240 56'%3E%3Cpath d='M0 6Q120 50 240 6' fill='none' stroke='%23175c39' stroke-width='12' stroke-linecap='round'/%3E%3Cpath d='M0 6Q120 50 240 6' fill='none' stroke='%232f9e62' stroke-width='8' stroke-dasharray='3 4'/%3E%3Cpath d='M0 3Q120 47 240 3' fill='none' stroke='%23f3d27a' stroke-width='1.5' stroke-dasharray='1 7' stroke-linecap='round'/%3E%3Ccircle cx='60' cy='25' r='3.5' fill='%23ff4d5e'/%3E%3Ccircle cx='180' cy='25' r='3.5' fill='%237fd3ff'/%3E%3Ccircle cx='96' cy='33' r='3' fill='%23f3d27a'/%3E%3Ccircle cx='144' cy='33' r='3' fill='%23fff'/%3E%3Cpath d='M120 28v8' stroke='%23f3d27a' stroke-width='1.5'/%3E%3Crect x='115' y='35' width='10' height='5' rx='1.5' fill='%23c9a24a'/%3E%3Ccircle cx='120' cy='47' r='8' fill='%23d0021b'/%3E%3Ccircle cx='117' cy='44' r='2.2' fill='%23fff' opacity='.5'/%3E%3C/svg%3E") top left/240px 56px repeat-x}
+.htitle{position:relative;flex-wrap:nowrap;align-items:flex-end;margin-bottom:clamp(18px,2.2vw,30px)}
+.htitle .k{color:#f3d27a}
+.htitle h1{font-size:clamp(28px,3.1vw,44px);text-shadow:0 3px 18px rgba(0,0,0,.25)}
+.hsub{color:#cfe2d6;margin-top:10px}
+.hdeco{flex:0 0 auto;width:clamp(170px,19vw,260px);margin:-24px 0 -8px}
+.hdeco svg{display:block;width:100%;height:auto;overflow:visible;filter:drop-shadow(0 8px 16px rgba(0,0,0,.3))}
+.hdeco .orn{transform-origin:50% 0;animation:swing 3.2s ease-in-out infinite alternate}.hdeco .o1{transform-origin:40px 0}.hdeco .o2{transform-origin:86px 0;animation-delay:-1s}.hdeco .o3{transform-origin:124px 0;animation-delay:-2s}
+@keyframes swing{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
+.hdeco .lt{animation:tw 1.6s ease-in-out infinite alternate}.hdeco .lt:nth-of-type(2n){animation-delay:.8s}
 @keyframes tw{from{opacity:.35}to{opacity:1}}
-.xart .st{transform-origin:100px 22px;animation:spin 6s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
-@media(prefers-reduced-motion:reduce){.xart .lt,.xart .st{animation:none}}
-@media(max-width:760px){.xin{grid-template-columns:1fr;text-align:left;padding-top:28px}.xart{width:44%;max-width:170px;order:-1;margin-top:-10px}.xbtn{height:44px;padding:0 18px;font-size:12px}.xbtns .xbtn{flex:1 1 100%;justify-content:center}}
+@media(prefers-reduced-motion:reduce){.hdeco .orn,.hdeco .lt{animation:none}}
+.tile{box-shadow:0 14px 34px rgba(0,0,0,.35);outline:2px solid rgba(243,210,122,.35);outline-offset:4px}
+.toff small::before{content:"🎁 "}
+@media(max-width:760px){.home{padding-block:56px 44px}.home>.w::before{top:-56px}.htitle{gap:10px}.hdeco{width:92px;margin:-34px -4px 0 0;overflow:hidden}.hdeco .orn{display:none}.hdeco svg{width:236%;margin-left:-136%}.htitle h1{font-size:clamp(24px,6.6vw,30px)}.htitle .k{font-size:11px;letter-spacing:.06em}.hsub{display:none}.home{padding-bottom:36px}.tile{outline-offset:3px}}
 /* nón Noel + tuyết đọng trên ô brand */
 .tile::before{content:"";position:absolute;left:0;right:0;top:-1px;height:22px;z-index:3;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 22' preserveAspectRatio='none'%3E%3Cpath d='M0 0H400V8C380 14 370 6 350 12S320 20 300 12 270 4 250 12 220 20 200 11 170 3 150 12 120 20 100 11 70 4 50 12 20 18 0 10z' fill='%23fff'/%3E%3C/svg%3E") top/100% 100% no-repeat;filter:drop-shadow(0 2px 2px rgba(0,0,0,.15))}
-.tile::after{content:"";position:absolute;top:6px;right:10px;width:clamp(54px,6vw,78px);aspect-ratio:120/100;z-index:4;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100'%3E%3Cpath d='M14 78C22 40 48 12 84 14c12 1 20 10 22 24l2 22-14 2c-2-12-8-20-18-20-22 0-40 18-46 40z' fill='%23d0021b'/%3E%3Cpath d='M30 46c10-16 26-26 44-26' stroke='%23ff4d5e' stroke-width='4' fill='none' opacity='.5'/%3E%3Crect x='4' y='72' width='86' height='22' rx='11' fill='%23fff'/%3E%3Ccircle cx='101' cy='64' r='13' fill='%23fff'/%3E%3C/svg%3E") center/contain no-repeat;transform:rotate(14deg);filter:drop-shadow(0 4px 6px rgba(0,0,0,.3))}
-.tile.sk::after,.tile.sk::before{display:none}
+.tin::before{content:"";position:absolute;top:6px;right:10px;width:clamp(54px,6vw,78px);aspect-ratio:120/100;z-index:4;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100'%3E%3Cpath d='M14 78C22 40 48 12 84 14c12 1 20 10 22 24l2 22-14 2c-2-12-8-20-18-20-22 0-40 18-46 40z' fill='%23d0021b'/%3E%3Cpath d='M30 46c10-16 26-26 44-26' stroke='%23ff4d5e' stroke-width='4' fill='none' opacity='.5'/%3E%3Crect x='4' y='72' width='86' height='22' rx='11' fill='%23fff'/%3E%3Ccircle cx='101' cy='64' r='13' fill='%23fff'/%3E%3C/svg%3E") center/contain no-repeat;transform:rotate(14deg);filter:drop-shadow(0 4px 6px rgba(0,0,0,.3))}
+.tile.sk .tin::before,.tile.sk::before{display:none}
 .logo::after{right:auto;left:-.5em;top:-.78em;width:1.35em;height:1.12em;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100'%3E%3Cpath d='M14 78C22 40 48 12 84 14c12 1 20 10 22 24l2 22-14 2c-2-12-8-20-18-20-22 0-40 18-46 40z' fill='%23d0021b'/%3E%3Crect x='4' y='72' width='86' height='22' rx='11' fill='%23fff' stroke='%23bbb' stroke-width='3'/%3E%3Ccircle cx='101' cy='64' r='12' fill='%23fff' stroke='%23bbb' stroke-width='3'/%3E%3C/svg%3E") center/contain no-repeat;transform:rotate(-16deg)}
 /* tuyết tĩnh khi máy giảm chuyển động + bông tuyết */
 @media(prefers-reduced-motion:reduce){.snow{display:block}.snow i{animation:none;top:var(--y,10%)}}
@@ -368,26 +369,8 @@ body.fbv .fab{display:none}
 </div></header>
 
 <section class="home g" id="home"><div class="w">
-  <div class="xhero"><div class="xin"><div><p class="xk">❄ MÙA LỄ HỘI CUỐI NĂM · GIÁNG SINH 2026</p>
-    <h2>Quà Noel<em>cho nàng</em></h2>
-    <p>Chọn quà chính hãng Lioness, I.AM.GIA, Alo Yoga cho người thương, hoặc tự thưởng cho mình sau một năm cố gắng. Mai order tận tay, giá sale đến −75%.</p>
-    <div class="xbtns"><a class="xbtn" href="#tiles">🎁 Chọn quà ngay</a><a class="xbtn g2" href="https://zalo.me/0981645881" target="_blank" rel="noopener">Nhắn Mai tư vấn quà</a></div>
-    <div class="xtags"><span>🎄 Hàng chính hãng</span><span>✨ Best seller</span><span>❤ Order tận tay</span></div></div>
-    <div class="xart"><svg viewBox="0 0 200 250" aria-hidden="true"><defs><linearGradient id="tg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#2f9e62"/><stop offset="1" stop-color="#11613a"/></linearGradient></defs>
-<ellipse cx="100" cy="236" rx="86" ry="10" fill="#fff" opacity=".9"/>
-<rect x="90" y="200" width="20" height="26" fill="#6b3f22"/>
-<path d="M100 40L150 110H122L166 168H134L182 214H18L66 168H34L78 110H50z" fill="url(#tg)"/>
-<path d="M66 110C88 122 112 122 134 110M48 168C80 182 120 182 152 168" stroke="#f3d27a" stroke-width="2.4" fill="none" stroke-dasharray="2 5" stroke-linecap="round"/>
-<path d="M56 196C86 206 116 206 146 196" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".85"/>
-<path d="M76 108C90 114 110 114 124 108M60 166C84 174 116 174 140 166" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".7"/>
-<circle class="lt" cx="84" cy="96" r="5" fill="#ff4d5e"/><circle class="lt" cx="118" cy="128" r="5.5" fill="#f3d27a"/><circle class="lt" cx="70" cy="150" r="5.5" fill="#7fd3ff"/>
-<circle class="lt" cx="130" cy="156" r="6" fill="#ff4d5e"/><circle class="lt" cx="96" cy="140" r="4.5" fill="#fff"/><circle class="lt" cx="58" cy="198" r="6" fill="#f3d27a"/>
-<circle class="lt" cx="146" cy="200" r="6" fill="#7fd3ff"/><circle class="lt" cx="104" cy="186" r="6" fill="#ff4d5e"/><circle class="lt" cx="80" cy="184" r="4.5" fill="#fff"/>
-<g class="st"><path d="M100 6l5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z" fill="#f3d27a"/></g>
-<g transform="translate(16 196)"><rect width="40" height="34" rx="3" fill="#d0021b"/><rect x="17" width="6" height="34" fill="#f3d27a"/><rect y="12" width="40" height="6" fill="#f3d27a"/><path d="M20 0C12-10 4-4 10 0M20 0C28-10 36-4 30 0" stroke="#f3d27a" stroke-width="3" fill="none"/></g>
-<g transform="translate(148 206)"><rect width="34" height="26" rx="3" fill="#fff"/><rect x="14" width="6" height="26" fill="#d0021b"/><path d="M17 0C10-8 3-3 8 0M17 0C24-8 31-3 26 0" stroke="#d0021b" stroke-width="3" fill="none"/></g>
-<g transform="translate(118 214)"><rect width="26" height="20" rx="3" fill="#1d6b45"/><rect x="10" width="5" height="20" fill="#fff"/></g></svg></div></div></div>
-  <div class="htitle"><div><p class="k">GIÁNG SINH · BLACK FRIDAY · BEST SELLER</p><h1 class="up">Chọn quà theo thương hiệu</h1></div><p class="hsub">Hàng chính hãng, Mai order tận tay. Bấm vào thương hiệu để xem các mẫu đang sale.</p></div>
+  <div class="htitle"><div><p class="k">🎄 GIÁNG SINH · BLACK FRIDAY · BEST SELLER</p><h1 class="up">Chọn quà Noel theo thương hiệu</h1><p class="hsub">Hàng chính hãng, Mai order tận tay. Bấm vào thương hiệu để xem các mẫu đang sale.</p></div>
+  <div class="hdeco" aria-hidden="true"><svg viewBox="0 0 260 120"><g class="orn o1"><path d="M40 0V38" stroke="#f3d27a" stroke-width="1.5"/><rect x="34" y="36" width="12" height="7" rx="2" fill="#c9a24a"/><circle cx="40" cy="58" r="16" fill="#d0021b"/><path d="M28 54q12 6 24 0" stroke="#fff" stroke-width="2.5" fill="none" opacity=".7"/><circle cx="34" cy="52" r="4" fill="#fff" opacity=".45"/></g><g class="orn o2"><path d="M86 0V18" stroke="#f3d27a" stroke-width="1.5"/><rect x="81" y="16" width="10" height="6" rx="2" fill="#c9a24a"/><circle cx="86" cy="34" r="12" fill="#f3d27a"/><circle cx="82" cy="30" r="3" fill="#fff" opacity=".55"/></g><g class="orn o3"><path d="M124 0V52" stroke="#f3d27a" stroke-width="1.5"/><rect x="118" y="50" width="12" height="7" rx="2" fill="#c9a24a"/><circle cx="124" cy="72" r="15" fill="#fff"/><path d="M110 70q14 8 28 0" stroke="#d0021b" stroke-width="3" fill="none"/><circle cx="119" cy="66" r="3.5" fill="#d0021b" opacity=".3"/></g><g transform="translate(150 6)"><path d="M55 4L80 42H66L92 78H74L102 108H8L36 78H18L44 42H30z" fill="#2f9e62"/><path d="M38 44q17 8 34 0M24 80q31 12 62 0" stroke="#f3d27a" stroke-width="2.4" fill="none" stroke-dasharray="2 5" stroke-linecap="round"/><circle class="lt" cx="48" cy="56" r="4" fill="#ff4d5e"/><circle class="lt" cx="66" cy="70" r="4" fill="#fff"/><circle class="lt" cx="40" cy="92" r="4" fill="#7fd3ff"/><circle class="lt" cx="74" cy="96" r="4" fill="#f3d27a"/><circle class="lt" cx="56" cy="34" r="3.5" fill="#f3d27a"/><path d="M55 -6l3.5 7.5 8 .8-6 5.5 2 8-7.5-4.2-7.5 4.2 2-8-6-5.5 8-.8z" fill="#f3d27a"/></g></svg></div></div>
   <div class="tiles" id="tiles"></div>
 </div></section>
 
