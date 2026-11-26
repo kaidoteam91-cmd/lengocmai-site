@@ -101,7 +101,7 @@ async function feedback() {
   if (!CFG.feedbackCsv) return null;
   const r = await fetch(CFG.feedbackCsv); if (!r.ok) throw new Error("HTTP " + r.status);
   return csvRows(await r.text()).slice(1).filter(x => (x[0] || "").trim())
-    .map(x => ({ img: driveImg(x[0]), id: spId(x[1] || ""), note: (x[2] || "").trim().slice(0, 200) })).reverse();
+    .map(x => ({ img: driveImg(x[0]), id: spId(x[1] || ""), link: (x[1] || "").trim().slice(0, 300), note: (x[2] || "").trim().slice(0, 200) })).reverse();
 }
 
 // Tách 1 sản phẩm Shopify thành các mẫu theo màu (đa số brand đã để mỗi màu là 1 sản phẩm riêng)
