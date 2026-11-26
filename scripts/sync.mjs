@@ -128,6 +128,8 @@ function colorItems(p, b, rates) {
     const v = pool.reduce((a, c) => (+c.price < +a.price ? c : a), pool[0]);
     const now = priceOf(+v.price, b, rates);
     const was = +v.compare_at_price > +v.price ? priceOf(+v.compare_at_price, b, rates) : now;
+    // % giảm lấy đúng theo giá gốc/giá sale trên web brand (không tính từ giá VND đã quy đổi)
+    const d = +v.compare_at_price > +v.price ? Math.round((1 - +v.price / +v.compare_at_price) * 100) : 0;
     let ims = p.images || [];
     if (colors.length > 1) {
       const ids = new Set(vs.map(x => x.id));
@@ -140,7 +142,7 @@ function colorItems(p, b, rates) {
       id: multi ? `${p.handle}-${String(col).toLowerCase().replace(/[^a-z0-9]+/g, "-")}` : p.handle,
       g, n: baseTitle(p.title, b.sep), col: (multi ? col : (col || colorTitle(p.title, b.sep))) || "", b: b.name, c: b.cat(p),
       ...(b.cg ? { cg: b.cg(p) } : {}), ...(so ? { so: 1 } : {}),
-      p: now, w: was, s: sizes, i: ims.slice(0, so ? 2 : 4).map(im => img(im.src)),
+      p: now, w: was, ...(d ? { d } : {}), s: sizes, i: ims.slice(0, so ? 2 : 4).map(im => img(im.src)),
       t: Date.parse(p.published_at || p.created_at) || 0,
     };
   }).filter(Boolean);
@@ -202,13 +204,16 @@ async function main() {
   }
   let fb = null; try { fb = await feedback(); } catch (e) { console.warn("Feedback lỗi:", e.message); }
   if (fb == null) fb = prev?.feedback || [];
+  // "Sale đến X%" ở ô brand = % giảm cao nhất trong các mẫu còn hàng của brand đó (theo web gốc)
+  const brandSale = { ...CFG.brandSale };
+  for (const b of BRANDS) { const m = Math.max(0, ...out.filter(i => i.b == b.name && !i.so).map(i => i.d || 0)); if (m) brandSale[b.name] = m; }
   const data = { v: 2, feedback: fb, updated: new Date().toISOString(), rates: { AUD: rates.AUD, USD: rates.USD, VND: 1, _at: rates._at || "" },
     rateOk, rateGoodAt: goodAt, rateNote,
-    brandSale: CFG.brandSale, cats, status, items: out };
+    brandSale, cats, status, items: out };
   await mkdir(new URL("../public/data/", import.meta.url), { recursive: true });
   await writeFile(OUT, JSON.stringify(data));
   // home.json: file nhỏ để trang đầu hiện ô brand + ảnh ngay, không chờ file lớn
-  const home = { updated: data.updated, brandSale: CFG.brandSale, brands: {} };
+  const home = { updated: data.updated, brandSale, brands: {} };
   for (const b of BRANDS) { const its = out.filter(i => i.b == b.name && !i.so).sort((a, c) => (a.r ?? 99999) - (c.r ?? 99999) || (c.t || 0) - (a.t || 0));
     home.brands[b.name] = { n: new Set(out.filter(i => i.b == b.name).map(i => i.g || i.id)).size, i: [its[0]?.i?.[0], its.find(i => i.g != its[0]?.g)?.i?.[0]].filter(Boolean) }; }
   await writeFile(new URL("../public/data/home.json", import.meta.url), JSON.stringify(home));
