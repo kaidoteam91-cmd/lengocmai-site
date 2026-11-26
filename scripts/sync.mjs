@@ -1,11 +1,10 @@
-// Đồng bộ sản phẩm BEST SELLER từ 3 web brand (Shopify) -> public/data/products.json
+// Đồng bộ TẤT CẢ sản phẩm còn hàng (kèm đánh dấu Best Seller theo web gốc) từ 3 web brand (Shopify) -> public/data/products.json
 // Chạy: node scripts/sync.mjs   (Node 18+). GitHub Actions chạy tự động mỗi tiếng.
 import { writeFile, readFile, mkdir } from "node:fs/promises";
 
 const OUT = new URL("../public/data/products.json", import.meta.url);
 const CFG = {
   markup: 1.07, fee: 550000, roundTo: 50000,
-  maxPrice: 8000000,                                     // chỉ lấy mẫu có giá hiển thị <= 8 triệu
   brandSale: { "Lioness": 50, "I.AM.GIA": 75, "Alo Yoga": 30 }, // % sale ở ô brand (sửa tay khi brand đổi đợt sale)
   fallbackRates: { AUD: 17403.88, USD: 25970, VND: 1 },
   rateBounds: { AUD: [12000, 24000] },                    // tỉ giá ngoài khoảng này = coi là lỗi
@@ -16,7 +15,7 @@ const CFG = {
 };
 
 // Giá hiển thị: Lioness, I.AM.GIA = giá AUD × tỉ giá bán VCB × 1.07 + 550.000, làm tròn lên 50.000.
-// Alo Yoga = giá web VND + 550.000 (giữ nguyên, không làm tròn).
+// Alo Yoga = giá web VND, làm tròn lên 50.000 (không cộng 550.000) — Kaido đổi 26/11.
 const BRANDS = [
   { name: "Lioness", base: "https://lionessfashion.com", cur: "AUD", best: "best-sellers",
     cats: ["Tops", "Dresses", "Pants", "Outerwear", "Shorts", "Skirts", "Jackets", "Denim", "Sets", "Swim"],
@@ -71,7 +70,7 @@ async function vcbRates() {
 }
 
 const priceOf = (v, b, rates) => b.exact
-  ? Math.round(v + CFG.fee)
+  ? Math.ceil(v / CFG.roundTo) * CFG.roundTo
   : Math.ceil((v * (rates[b.cur] ?? 1) * CFG.markup + CFG.fee) / CFG.roundTo) * CFG.roundTo;
 // rút gọn link ảnh Shopify cho file nhẹ hơn ("~" = https://cdn.shopify.com/s/files/)
 const img = s => { if (!s) return ""; s = s.split("?")[0].replace(/^https?:/, ""); return s.replace(/^\/\/cdn\.shopify\.com\/s\/files\//, "~"); };
@@ -158,17 +157,19 @@ async function main() {
       const best = await allPages(`${b.base}/collections/${b.best}/products.json`);
       const all = await allPages(`${b.base}/products.json`);
       const keep = p => (!b.keep || b.keep(p)) && !ov.hide.has(p.handle);
-      // hạng best seller theo kiểu dáng; mọi màu còn hàng của kiểu best seller đều được lấy
+      // Best Seller = đúng các sản phẩm trong collection best seller của web gốc (thứ tự giữ nguyên).
+      // Thứ tự "Nổi bật": kiểu có màu best seller lên trước theo hạng, còn lại xếp sau (mới nhất trước).
+      const bsRank = new Map(); best.filter(keep).forEach((p, i) => { if (!bsRank.has(p.handle)) bsRank.set(p.handle, i); });
       const rank = new Map();
-      best.filter(keep).forEach((p, i) => { const g = groupKey(p, b), r = ov.pin.has(p.handle) ? -1 : i;
-        if (!rank.has(g) || r < rank.get(g)) rank.set(g, r); });
+      for (const p of best) { if (!keep(p)) continue; const g = groupKey(p, b), r = ov.pin.has(p.handle) ? -1 : bsRank.get(p.handle);
+        if (!rank.has(g) || r < rank.get(g)) rank.set(g, r); }
       const seen = new Set(), items = [];
       for (const p of [...best, ...all]) {
         if (seen.has(p.handle) || !keep(p)) continue; seen.add(p.handle);
-        if (!rank.has(groupKey(p, b))) continue;
         for (const it of colorItems(p, b, rates)) {
-          if (it.p > CFG.maxPrice) continue;
-          it.r = rank.get(it.g); items.push(it);
+          it.r = rank.has(it.g) ? rank.get(it.g) : (ov.pin.has(p.handle) ? -1 : 99999);
+          if (bsRank.has(p.handle)) it.bs = 1;
+          items.push(it);
         }
       }
       // chỉ hiện kiểu còn ít nhất 1 màu còn hàng (giống danh sách best seller của web gốc); màu đã hết vẫn giữ để gạch ngang
@@ -177,7 +178,8 @@ async function main() {
       const used = new Set(items.map(i => i.c));
       cats[b.name] = [...b.cats.filter(c => used.has(c)), ...[...used].filter(c => !b.cats.includes(c)).sort()];
       out.push(...items); status[b.name] = items.length;
-      console.log(b.name, rank.size, "kiểu best seller,", items.length, "mẫu màu còn hàng <= 8tr");
+      if (items.some(i => i.bs)) cats[b.name].unshift("Best Seller");
+      console.log(b.name, bsRank.size, "mẫu best seller,", items.length, "mẫu màu (kiểu còn hàng)");
     } catch (e) {
       console.warn(b.name, "lỗi:", e.message, "-> giữ dữ liệu cũ");
       const old = prev?.v === 2 ? (prev.items || []).filter(x => x.b === b.name) : [];
