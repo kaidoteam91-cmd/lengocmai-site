@@ -319,6 +319,40 @@ body.fbv .fab{display:none}
 .fcard p{margin:0;padding:8px 12px 10px;font-size:13px;color:var(--soft);background:var(--bg);border:1px solid var(--line);border-top:0}
 .fempty{padding:60px 0;text-align:center;color:var(--soft)}
 @media(max-width:760px){.fgrid{columns:2;column-gap:8px}.fcard{margin-bottom:8px}.fcard .fl{padding:8px;font-size:11px}}
+/* ===== Giáng sinh v2: banner cây thông, nón Noel, tuyết phủ ===== */
+.xhero{position:relative;overflow:hidden;color:#fff;background:radial-gradient(120% 90% at 78% 10%,#1d6b45 0%,#0d3f2a 45%,#07261a 100%);border-radius:0;margin:0 0 clamp(28px,4vw,48px)}
+.xhero::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.9;background-image:radial-gradient(2px 2px at 20px 30px,#fff 50%,transparent 51%),radial-gradient(1.5px 1.5px at 70px 90px,#fff 50%,transparent 51%),radial-gradient(2.5px 2.5px at 130px 50px,#fff 50%,transparent 51%),radial-gradient(1.5px 1.5px at 170px 140px,#fff 50%,transparent 51%),radial-gradient(2px 2px at 40px 160px,#fff 50%,transparent 51%),radial-gradient(1px 1px at 110px 120px,#fff 50%,transparent 51%);background-size:200px 200px}
+.xhero::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:clamp(34px,5vw,64px);background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 80' preserveAspectRatio='none'%3E%3Cpath d='M0 40C120 10 220 60 360 34S600 6 760 38 1020 70 1200 30V80H0z' fill='%23fff'/%3E%3Cpath d='M0 58C160 40 300 76 480 56S820 36 1000 60 1140 64 1200 52V80H0z' fill='%23eef3f7'/%3E%3C/svg%3E") bottom/100% 100% no-repeat;pointer-events:none}
+.xin{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);align-items:center;gap:clamp(16px,3vw,48px);padding:clamp(36px,5vw,72px) clamp(20px,4vw,64px) clamp(52px,7vw,96px)}
+.xk{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.16em;color:#f3d27a;margin:0 0 14px}
+.xhero h2{margin:0;font-size:clamp(38px,6.4vw,92px);line-height:.92;font-weight:800;text-transform:uppercase;letter-spacing:-.015em;text-shadow:0 4px 24px rgba(0,0,0,.25)}
+.xhero h2 em{font-style:normal;color:#ff4d5e;display:block}
+.xhero p{margin:16px 0 0;max-width:30em;color:#d9e8df;font-size:clamp(14px,1.3vw,17px)}
+.xbtns{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.xbtn{display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 24px;border-radius:99px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;background:var(--red);color:#fff;box-shadow:0 8px 24px rgba(208,2,27,.4);transition:transform .2s}
+.xbtn:hover{transform:translateY(-2px)}.xbtn.g2{background:#fff;color:#0d3f2a;box-shadow:none}
+.xtags{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.xtags span{font-size:11px;font-weight:600;letter-spacing:.06em;padding:6px 10px;border:1px solid rgba(255,255,255,.28);border-radius:99px;color:#e9f3ed}
+.xart{position:relative;justify-self:center;width:min(100%,380px)}
+.xart svg{display:block;width:100%;height:auto;filter:drop-shadow(0 14px 30px rgba(0,0,0,.35))}
+.xart .lt{animation:tw 1.6s ease-in-out infinite alternate}.xart .lt:nth-of-type(3n){animation-delay:.5s}.xart .lt:nth-of-type(3n+1){animation-delay:1s}
+@keyframes tw{from{opacity:.35}to{opacity:1}}
+.xart .st{transform-origin:100px 22px;animation:spin 6s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.xart .lt,.xart .st{animation:none}}
+@media(max-width:760px){.xin{grid-template-columns:1fr;text-align:left;padding-top:28px}.xart{width:44%;max-width:170px;order:-1;margin-top:-10px}.xbtn{height:44px;padding:0 18px;font-size:12px}.xbtns .xbtn{flex:1 1 100%;justify-content:center}}
+/* nón Noel + tuyết đọng trên ô brand */
+.tile::before{content:"";position:absolute;left:0;right:0;top:-1px;height:22px;z-index:3;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 22' preserveAspectRatio='none'%3E%3Cpath d='M0 0H400V8C380 14 370 6 350 12S320 20 300 12 270 4 250 12 220 20 200 11 170 3 150 12 120 20 100 11 70 4 50 12 20 18 0 10z' fill='%23fff'/%3E%3C/svg%3E") top/100% 100% no-repeat;filter:drop-shadow(0 2px 2px rgba(0,0,0,.15))}
+.tile::after{content:"";position:absolute;top:6px;right:10px;width:clamp(54px,6vw,78px);aspect-ratio:120/100;z-index:4;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100'%3E%3Cpath d='M14 78C22 40 48 12 84 14c12 1 20 10 22 24l2 22-14 2c-2-12-8-20-18-20-22 0-40 18-46 40z' fill='%23d0021b'/%3E%3Cpath d='M30 46c10-16 26-26 44-26' stroke='%23ff4d5e' stroke-width='4' fill='none' opacity='.5'/%3E%3Crect x='4' y='72' width='86' height='22' rx='11' fill='%23fff'/%3E%3Ccircle cx='101' cy='64' r='13' fill='%23fff'/%3E%3C/svg%3E") center/contain no-repeat;transform:rotate(14deg);filter:drop-shadow(0 4px 6px rgba(0,0,0,.3))}
+.tile.sk::after,.tile.sk::before{display:none}
+.logo::after{right:auto;left:-.5em;top:-.78em;width:1.35em;height:1.12em;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100'%3E%3Cpath d='M14 78C22 40 48 12 84 14c12 1 20 10 22 24l2 22-14 2c-2-12-8-20-18-20-22 0-40 18-46 40z' fill='%23d0021b'/%3E%3Crect x='4' y='72' width='86' height='22' rx='11' fill='%23fff' stroke='%23bbb' stroke-width='3'/%3E%3Ccircle cx='101' cy='64' r='12' fill='%23fff' stroke='%23bbb' stroke-width='3'/%3E%3C/svg%3E") center/contain no-repeat;transform:rotate(-16deg)}
+/* tuyết tĩnh khi máy giảm chuyển động + bông tuyết */
+@media(prefers-reduced-motion:reduce){.snow{display:block}.snow i{animation:none;top:var(--y,10%)}}
+.snow b{position:absolute;top:-20px;color:#cfdbe6;font-weight:400;font-size:var(--s,14px);animation:fall var(--d,14s) linear var(--w,0s) infinite;text-shadow:0 0 2px rgba(0,0,0,.15)}
+@media(prefers-reduced-motion:reduce){.snow b{animation:none;top:var(--y,10%)}}
+/* dải băng countdown: tuyết đọng + cành thông */
+.band::after{content:"";position:absolute;left:0;right:0;top:-1px;height:28px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 28' preserveAspectRatio='none'%3E%3Cpath d='M0 0H1200V10C1140 22 1100 8 1040 16S940 26 880 14 780 4 720 16 620 26 560 14 460 4 400 16 300 26 240 14 120 6 0 14z' fill='%23fff'/%3E%3C/svg%3E") top/100% 100% no-repeat;pointer-events:none}
+.bxm{position:absolute;left:47%;bottom:0;width:clamp(90px,10vw,150px);opacity:.95;pointer-events:none}
+@media(max-width:1100px){.bxm{display:none}}
+.fxm{display:block;margin-top:6px;font-size:13px;color:var(--pine);font-weight:600;letter-spacing:.04em}
 .card{content-visibility:auto;contain-intrinsic-size:auto 520px}
 @media(max-width:760px){.sw{width:16px;height:16px}.cols button{width:50px}}
 </style>
@@ -334,7 +368,26 @@ body.fbv .fab{display:none}
 </div></header>
 
 <section class="home g" id="home"><div class="w">
-  <div class="htitle"><div><p class="k">GIÁNG SINH · BLACK FRIDAY · BEST SELLER</p><h1 class="up">Chọn thương hiệu</h1></div><p class="hsub">Hàng chính hãng, Mai order tận tay. Bấm vào thương hiệu để xem các mẫu đang sale.</p></div>
+  <div class="xhero"><div class="xin"><div><p class="xk">❄ MÙA LỄ HỘI CUỐI NĂM · GIÁNG SINH 2026</p>
+    <h2>Quà Noel<em>cho nàng</em></h2>
+    <p>Chọn quà chính hãng Lioness, I.AM.GIA, Alo Yoga cho người thương, hoặc tự thưởng cho mình sau một năm cố gắng. Mai order tận tay, giá sale đến −75%.</p>
+    <div class="xbtns"><a class="xbtn" href="#tiles">🎁 Chọn quà ngay</a><a class="xbtn g2" href="https://zalo.me/0981645881" target="_blank" rel="noopener">Nhắn Mai tư vấn quà</a></div>
+    <div class="xtags"><span>🎄 Hàng chính hãng</span><span>✨ Best seller</span><span>❤ Order tận tay</span></div></div>
+    <div class="xart"><svg viewBox="0 0 200 250" aria-hidden="true"><defs><linearGradient id="tg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#2f9e62"/><stop offset="1" stop-color="#11613a"/></linearGradient></defs>
+<ellipse cx="100" cy="236" rx="86" ry="10" fill="#fff" opacity=".9"/>
+<rect x="90" y="200" width="20" height="26" fill="#6b3f22"/>
+<path d="M100 40L150 110H122L166 168H134L182 214H18L66 168H34L78 110H50z" fill="url(#tg)"/>
+<path d="M66 110C88 122 112 122 134 110M48 168C80 182 120 182 152 168" stroke="#f3d27a" stroke-width="2.4" fill="none" stroke-dasharray="2 5" stroke-linecap="round"/>
+<path d="M56 196C86 206 116 206 146 196" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".85"/>
+<path d="M76 108C90 114 110 114 124 108M60 166C84 174 116 174 140 166" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".7"/>
+<circle class="lt" cx="84" cy="96" r="5" fill="#ff4d5e"/><circle class="lt" cx="118" cy="128" r="5.5" fill="#f3d27a"/><circle class="lt" cx="70" cy="150" r="5.5" fill="#7fd3ff"/>
+<circle class="lt" cx="130" cy="156" r="6" fill="#ff4d5e"/><circle class="lt" cx="96" cy="140" r="4.5" fill="#fff"/><circle class="lt" cx="58" cy="198" r="6" fill="#f3d27a"/>
+<circle class="lt" cx="146" cy="200" r="6" fill="#7fd3ff"/><circle class="lt" cx="104" cy="186" r="6" fill="#ff4d5e"/><circle class="lt" cx="80" cy="184" r="4.5" fill="#fff"/>
+<g class="st"><path d="M100 6l5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z" fill="#f3d27a"/></g>
+<g transform="translate(16 196)"><rect width="40" height="34" rx="3" fill="#d0021b"/><rect x="17" width="6" height="34" fill="#f3d27a"/><rect y="12" width="40" height="6" fill="#f3d27a"/><path d="M20 0C12-10 4-4 10 0M20 0C28-10 36-4 30 0" stroke="#f3d27a" stroke-width="3" fill="none"/></g>
+<g transform="translate(148 206)"><rect width="34" height="26" rx="3" fill="#fff"/><rect x="14" width="6" height="26" fill="#d0021b"/><path d="M17 0C10-8 3-3 8 0M17 0C24-8 31-3 26 0" stroke="#d0021b" stroke-width="3" fill="none"/></g>
+<g transform="translate(118 214)"><rect width="26" height="20" rx="3" fill="#1d6b45"/><rect x="10" width="5" height="20" fill="#fff"/></g></svg></div></div></div>
+  <div class="htitle"><div><p class="k">GIÁNG SINH · BLACK FRIDAY · BEST SELLER</p><h1 class="up">Chọn quà theo thương hiệu</h1></div><p class="hsub">Hàng chính hãng, Mai order tận tay. Bấm vào thương hiệu để xem các mẫu đang sale.</p></div>
   <div class="tiles" id="tiles"></div>
 </div></section>
 
@@ -361,7 +414,7 @@ body.fbv .fab{display:none}
 
 <section class="band g"><div class="bgrid w">
   <div><h2 class="up">Sale kết thúc <em>sớm</em></h2><p>Giá sale theo đợt Black Friday của các thương hiệu. Hết giờ, giá quay về bình thường.</p></div>
-  <div class="clock" id="clock"><div><b id="cD">0</b><small>NGÀY</small></div><div><b id="cH">00</b><small>GIỜ</small></div><div><b id="cM">00</b><small>PHÚT</small></div><div><b id="cS">00</b><small>GIÂY</small></div></div>
+  <svg class="bxm" viewBox="0 0 200 250" aria-hidden="true"><path d="M100 40L150 110H122L166 168H134L182 214H18L66 168H34L78 110H50z" fill="#1d6b45"/><rect x="90" y="214" width="20" height="24" fill="#6b3f22"/><path d="M100 10l5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z" fill="#f3d27a"/><circle cx="84" cy="100" r="5" fill="#ff4d5e"/><circle cx="120" cy="140" r="5" fill="#f3d27a"/><circle cx="70" cy="180" r="6" fill="#7fd3ff"/><circle cx="132" cy="190" r="6" fill="#ff4d5e"/></svg><div class="clock" id="clock"><div><b id="cD">0</b><small>NGÀY</small></div><div><b id="cH">00</b><small>GIỜ</small></div><div><b id="cM">00</b><small>PHÚT</small></div><div><b id="cS">00</b><small>GIÂY</small></div></div>
 </div></section>
 
 <section class="how g" id="lienhe"><div class="hw w">
@@ -369,7 +422,7 @@ body.fbv .fab{display:none}
   <div><h3><span>●</span> Nhắn Mai</h3><p>Bấm “Liên hệ” rồi chọn Zalo hoặc Messenger, link mẫu bạn xem được gửi kèm sẵn.</p></div>
   <div><h3><span>●</span> Nhận hàng</h3><p>Mai xác nhận còn hàng, báo phí ship và giao tận nơi. Chuyển khoản hoặc COD.</p></div>
 </div></section>
-<footer class="g"><div class="fw w"><p class="mark">LE NGOC MAI</p><div class="fmeta"><span>Zalo 0981 645 881</span><span>lengocmai.com</span><span>Shop phân phối lại, không phải trang chính thức của thương hiệu.</span></div></div></footer>
+<footer class="g"><div class="fw w"><p class="mark">LE NGOC MAI<span class="fxm">🎄 Giáng sinh an lành &amp; năm mới rực rỡ</span></p><div class="fmeta"><span>Zalo 0981 645 881</span><span>lengocmai.com</span><span>Shop phân phối lại, không phải trang chính thức của thương hiệu.</span></div></div></footer>
 
 <div class="dlg" id="dlg" role="dialog" aria-modal="true" aria-label="Chi tiết sản phẩm"><div class="box" id="box"></div></div>
 <div class="toast" id="toast"></div>
@@ -497,9 +550,9 @@ function parseCSV(t){const rows=[];let row=[],f="",q=false;for(let i=0;i<t.lengt
 function renderHome(){
   const bs=items.length?[...new Set(items.map(i=>i.brand))]:Object.keys(CONFIG.brandSale);
   $("#tiles").innerHTML=bs.map(b=>{const its=items.filter(i=>i.brand==b).sort(SORTS.hot[1]),a=its[0],z=its[1]||its[0];return `<a class="tile${a?"":" sk"}" href="/b/${bslug(b)}" aria-label="${esc(b)}">${a?`<img src="${esc(im(gimg(a,0),800))}" data-fb="${esc(fbOf(a.cat,0))}" alt="" fetchpriority="high"><img src="${esc(im(gimg(z,0),800))}" data-fb="${esc(fbOf(z.cat,0))}" alt="" loading="lazy">`:""}<div class="tin"><div class="tlogo${lcls(b)}">${LOGOS[b]||`<b class="up" style="font-size:40px">${esc(b)}</b>`}</div><div class="tfoot"><div class="toff"><small>SALE ĐẾN</small>−${bmax(b)}%</div><div class="tmeta">${its.length?its.length.toLocaleString("vi-VN")+" mẫu best seller":"Đang tải…"}<svg width="28" height="10" viewBox="0 0 28 10" fill="none" stroke="currentColor"><path d="M0 5h27M22 1l5 4-5 4"/></svg></div></div></div></a>`}).join("");
-  const mx=Math.max(...bs.map(bmax)),w=["Merry Christmas","Black Friday sale","Giảm đến −"+mx+"%","Best seller",...bs];
+  const mx=Math.max(...bs.map(bmax)),w=["🎄 Merry Christmas","🎁 Quà Noel","Black Friday sale","Giảm đến −"+mx+"%","Best seller",...bs];
   $("#track").innerHTML=[...w,...w].map(b=>`<span>${esc(b)}</span>`).join("");
-  const a=["❄ GIÁNG SINH AN LÀNH ❄","BLACK FRIDAY · GIẢM ĐẾN −"+mx+"%","HÀNG CHÍNH HÃNG LIONESS · I.AM.GIA · ALO YOGA","NHẮN ZALO 0981 645 881 ĐỂ GIỮ SIZE"];
+  const a=["🎄 GIÁNG SINH AN LÀNH","🎁 CHỌN QUÀ NOEL CHO NGƯỜI THƯƠNG","BLACK FRIDAY · GIẢM ĐẾN −"+mx+"%","HÀNG CHÍNH HÃNG LIONESS · I.AM.GIA · ALO YOGA","NHẮN ZALO 0981 645 881 ĐỂ GIỮ SIZE"];
   $("#ann").innerHTML=[...a,...a,...a,...a].map(t=>`<span>${esc(t)}</span>`).join("");
 }
 function renderFilters(){
@@ -567,8 +620,10 @@ function renderFeedback(){const g=$("#fgrid");if(!g)return;
   g.innerHTML=FEED.map((f,k)=>{const fc=f.id&&findColor(f.id),G=fc&&fc[0];const href=G?"/sp/"+encodeURIComponent(f.id):"";
     const im1=`<img src="${esc(f.img)}" alt="${esc(G?G.name:"Feedback khách hàng")}" loading="${k<6?"eager":"lazy"}" decoding="async">`;
     return `<figure class="fcard">${href?`<a href="${href}">${im1}</a><a class="fl" href="${href}"><span>${esc(G.name)}</span><em>Xem mẫu →</em></a>`:im1}${f.note?`<p>${esc(f.note)}</p>`:""}</figure>`}).join("")}
-(function(){const s=$("#snow");if(!s||matchMedia("(prefers-reduced-motion: reduce)").matches)return;const n=innerWidth<760?14:26;let h="";
-  for(let k=0;k<n;k++){const sz=(Math.random()*4+3).toFixed(1);h+=`<i style="left:${(Math.random()*100).toFixed(1)}%;--s:${sz}px;--d:${(Math.random()*10+9).toFixed(1)}s;--w:-${(Math.random()*18).toFixed(1)}s;--x:${(Math.random()*80-40).toFixed(0)}px;opacity:${(Math.random()*.5+.45).toFixed(2)}"></i>`}s.innerHTML=h})();
+(function(){const s=$("#snow");if(!s)return;const still=matchMedia("(prefers-reduced-motion: reduce)").matches,n=innerWidth<760?18:34;let h="";const R=(a,b)=>(Math.random()*(b-a)+a);
+  for(let k=0;k<n;k++){const st=`left:${R(0,100).toFixed(1)}%;--y:${R(2,96).toFixed(1)}%;--d:${R(9,19).toFixed(1)}s;--w:-${R(0,18).toFixed(1)}s;--x:${R(-40,40).toFixed(0)}px;opacity:${R(.45,.95).toFixed(2)}`;
+    h+=k%4==0?`<b style="${st};--s:${R(11,20).toFixed(0)}px">❄</b>`:`<i style="${st};--s:${R(3,7).toFixed(1)}px"></i>`}
+  s.innerHTML=h;if(still)s.style.opacity=".7"})();
 function findColor(id){for(const G of items){const c=G.colors.find(c=>c.id==id);if(c)return [G,c]}return []}
 function openItem(id,push){
   const [G,c]=findColor(id);if(!G)return;const keep=$("#dlg").classList.contains("open")&&cur&&cur.G==G;
