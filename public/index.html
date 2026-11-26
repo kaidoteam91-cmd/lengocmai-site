@@ -496,10 +496,10 @@ body.fbv .fab{display:none}
 /* điện thoại, trong trang brand: thu nhỏ & nép vào mép trái để không che tên/giá sản phẩm; ẩn khi đang cuộn */
 @media(max-width:760px){
  .fab,.mus{transition:transform .35s var(--ease),opacity .35s}
- body:is(.inb,:not(.inb)) .fab{left:calc(-12px + env(safe-area-inset-left,0px));width:44px;height:44px;opacity:.95}
+ body:is(.inb,:not(.inb)) .fab{left:calc(6px + env(safe-area-inset-left,0px));width:44px;height:44px;opacity:.95}
  body:is(.inb,:not(.inb)) .fab b{display:none}
  body:is(.inb,:not(.inb)) .fab::before{width:22px;height:19px;top:-9px;right:-2px}
- body:is(.inb,:not(.inb)) .mus{left:calc(-8px + env(safe-area-inset-left,0px));top:calc(50% + 34px);width:32px;height:32px;opacity:.9}
+ body:is(.inb,:not(.inb)) .mus{left:calc(12px + env(safe-area-inset-left,0px));top:calc(50% + 36px);width:32px;height:32px;opacity:.9}
  body:is(.inb,:not(.inb)) .mus svg{width:15px;height:15px}
  body.scr:is(.inb,:not(.inb)) .fab{transform:translate(-120%,-50%)}
  body.scr:is(.inb,:not(.inb)) .mus{transform:translateX(-140%)}
@@ -664,7 +664,7 @@ const ex=u=>!u?"":u[0]=="~"?CDN+u.slice(1):u.startsWith("//")?"https:"+u:u;
 const im=(u,w)=>isCdn(u)?u+"?width="+w:u;
 const sset=u=>isCdn(u)?[360,540,720,960].map(w=>`${u}?width=${w} ${w}w`).join(","):"";
 const fbOf=(cat,k)=>art(CTYPE[cat]||"top","#bfae9c",k);
-function colorOf(x){return {id:x.id,col:x.col||"",so:!!x.so,bs:!!x.bs,x:x.x||[],cg:x.cg||"",now:x.p,was:x.w,pct:x.w>x.p?Math.round((1-x.p/x.w)*100):0,
+function colorOf(x){return {id:x.id,col:x.col||"",so:!!x.so,bs:!!x.bs,x:x.x||[],cg:x.cg||"",now:x.p,was:x.w,pct:x.d??(x.w>x.p?Math.round((1-x.p/x.w)*100):0),
   sizes:(x.s||[]).map(s=>Array.isArray(s)?{l:s[0],a:!!s[1]}:{l:String(s),a:true}),imgs:(x.i||[]).map(ex).filter(Boolean),r:x.r??9999,t:x.t||0}}
 function groupItems(arr){const m=new Map();for(const x of arr){const k=x.g||x.id;if(!m.has(k))m.set(k,{id:x.id,g:k,name:x.n,brand:x.b,cat:x.c,colors:[]});const G=m.get(k);if(!G.colors.some(c=>c.id==x.id))G.colors.push(colorOf(x))}
   return [...m.values()].map(G=>{if(G.colors.some(c=>c.cg)){const o={Core:0,Limited:1};G.colors.sort((a,b)=>(o[a.cg]??0)-(o[b.cg]??0))}
