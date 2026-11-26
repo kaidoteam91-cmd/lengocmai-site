@@ -185,6 +185,7 @@ footer{border-top:1px solid var(--line);padding-block:40px calc(32px + env(safe-
 .btn.main:hover{background:var(--red);border-color:var(--red);color:#fff}
 .btn.ghost:hover{background:var(--ink);color:var(--bg)}
 .pick{display:grid;gap:10px;animation:pop .45s var(--ease)}
+.pick[hidden]{display:none}
 .opt{display:flex;align-items:center;justify-content:center;gap:12px;height:56px;border:1px solid var(--line);border-radius:12px;text-decoration:none;font-size:14px;font-weight:600;transition:border-color .3s,transform .4s var(--ease)}
 .opt:hover{border-color:var(--ink);transform:translateY(-2px)}
 @keyframes pop{from{opacity:0;transform:translateY(-8px)}}
@@ -383,6 +384,14 @@ body.fbv .fab{display:none}
 .fab b{position:absolute;left:50%;top:auto;bottom:-13px;transform:translateX(-50%);writing-mode:horizontal-tb;background:var(--red);color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.02em;text-transform:none;padding:3px 9px;border-radius:99px;white-space:nowrap;box-shadow:0 3px 8px rgba(208,2,27,.3)}
 .fab::before{top:-13px;right:-6px;left:auto;width:32px;height:27px;z-index:2}
 @media(max-width:760px){.fab,body.inb .fab{left:calc(8px + env(safe-area-inset-left,0px));width:54px;height:54px;padding:0}.fab b{font-size:9.5px;padding:2px 7px;bottom:-12px}.fab::before{width:27px;height:23px;top:-11px}}
+/* Liên hệ ở thanh dưới: bấm mới xổ Zalo / Messenger */
+.mbar{position:fixed}.mpick{position:absolute;right:6px;bottom:calc(100% + 10px);display:grid;gap:6px;min-width:200px;padding:8px;background:var(--bg);color:var(--ink);border-radius:18px;box-shadow:0 12px 34px rgba(0,0,0,.25);animation:pop .3s var(--ease)}
+.mpick[hidden]{display:none}
+.mopt{display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--ink);font-weight:600;font-size:15px}
+.mopt:hover{border-color:var(--ink)}
+/* nút nhạc: xếp ngay dưới nút người tuyết, không che giá */
+.mus,body.inb .mus{left:calc(18px + env(safe-area-inset-left,0px));top:calc(50% + 58px);bottom:auto;width:42px;height:42px}
+@media(max-width:760px){.mus,body.inb .mus{left:calc(14px + env(safe-area-inset-left,0px));top:calc(50% + 50px);width:40px;height:40px}}
 </style>
 
 
@@ -410,7 +419,7 @@ body.fbv .fab{display:none}
   <nav class="filters g"><div class="fwrap w" id="filters"></div></nav>
   <div class="shop g"><div class="w shopw"><aside class="side" id="side" aria-label="Bộ lọc"></aside>
     <main><div class="grid" id="grid"></div><div class="more" id="more" hidden><button class="btn ghost" id="morebtn"><span>Xem thêm</span></button></div></main></div></div>
-  <div class="mbar" id="mbar"><button class="mfil" id="fopen"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 4h14M5 9h8M7.5 14h3"/></svg><span>Lọc &amp; sắp xếp</span><i id="fbadge" hidden></i></button><a class="mzalo" id="mzalo" href="#">Nhắn Zalo</a></div>
+  <div class="mbar" id="mbar"><button class="mfil" id="fopen"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 4h14M5 9h8M7.5 14h3"/></svg><span>Lọc &amp; sắp xếp</span><i id="fbadge" hidden></i></button><button class="mzalo" id="mzalo" type="button" aria-expanded="false">Liên hệ</button><div class="mpick" id="mpick" hidden><a class="mopt" href="https://zalo.me/0981645881" target="_blank" rel="noopener"><svg viewBox="0 0 48 48" width="26" height="26" aria-hidden="true"><rect width="48" height="48" rx="12" fill="#0068FF"/><text x="24" y="30" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="14" fill="#fff">Zalo</text></svg><span>Zalo</span></a><a class="mopt" href="https://m.me/lengocmai1997" target="_blank" rel="noopener"><svg viewBox="0 0 48 48" width="26" height="26" aria-hidden="true"><defs><linearGradient id="mg2" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#0099FF"/><stop offset=".6" stop-color="#A033FF"/><stop offset="1" stop-color="#FF5280"/></linearGradient></defs><path d="M24 4C12.7 4 4 12.3 4 23.5c0 5.9 2.4 11 6.4 14.5v6l5.8-3.2c2.4.7 5 1.1 7.8 1.1 11.3 0 20-8.3 20-19.5S35.3 4 24 4z" fill="url(#mg2)"/><path d="M12 29l7.4-11.7 5.9 4.4 6.2-4.4L36 18l-7.4 11.7-5.9-4.4-6.2 4.4z" fill="#fff"/></svg><span>Messenger</span></a></div></div>
   <div class="sheet" id="sheet" aria-hidden="true"><div class="sbox" role="dialog" aria-label="Lọc và sắp xếp"><div class="sgrab"></div><div class="shd"><b>Lọc &amp; sắp xếp</b><button class="sx" id="fclose" aria-label="Đóng"><svg width="14" height="14" viewBox="0 0 16 16" stroke="currentColor" stroke-width="1.4"><path d="M2 2l12 12M14 2L2 14"/></svg></button></div><div class="sbody" id="sbody"></div><div class="sft"><button class="btn ghost" id="freset"><span>Đặt lại</span></button><button class="btn main" id="fdone"><span class="js-count2">Xem mẫu</span></button></div></div></div>
 </section>
 
@@ -638,6 +647,10 @@ function fbTarget(f){const L=String(f.link||"").trim();let fc=f.id?findColor(f.i
   const mb=L.match(/\/b\/([a-z0-9-]+)/i)||L.match(/#b-([a-z0-9-]+)/i);if(mb){const b=Object.keys(CONFIG.brandSale||{}).find(x=>bslug(x)==mb[1].toLowerCase());if(b)return{href:"/b/"+bslug(b),label:"Các mẫu "+b}}
   const ml=L.match(/^(?:https?:\/\/)?(?:www\.)?lengocmai\.com(\/[^\s]*)?$/i);if(ml)return{href:ml[1]||"/",label:"LE NGOC MAI"};
   return{}}
+(function(){const s=$("#snow");if(!s)return;const still=matchMedia("(prefers-reduced-motion: reduce)").matches,n=innerWidth<760?18:34;let h="";const R=(a,b)=>(Math.random()*(b-a)+a);
+  for(let k=0;k<n;k++){const st=`left:${R(0,100).toFixed(1)}%;--y:${R(2,96).toFixed(1)}%;--d:${R(9,19).toFixed(1)}s;--w:-${R(0,18).toFixed(1)}s;--x:${R(-40,40).toFixed(0)}px;opacity:${R(.45,.95).toFixed(2)}`;
+    h+=k%4==0?`<b style="${st};--s:${R(11,20).toFixed(0)}px">❄</b>`:`<i style="${st};--s:${R(3,7).toFixed(1)}px"></i>`}
+  s.innerHTML=h;if(still)s.style.opacity=".7"})();
 function findColor(id){for(const G of items){const c=G.colors.find(c=>c.id==id);if(c)return [G,c]}return []}
 function openItem(id,push){
   const [G,c]=findColor(id);if(!G)return;const keep=$("#dlg").classList.contains("open")&&cur&&cur.G==G;
@@ -672,7 +685,8 @@ document.addEventListener("click",async e=>{
   if(e.target.closest("#fopen")){sheet(true);return}
   if(e.target.closest("#fclose,#fdone")||e.target.id=="sheet"){sheet(false);scrollTo({top:$("#bview").offsetTop+$(".bhead").offsetHeight,behavior:"smooth"});return}
   if(e.target.closest("#freset")){cat="Tất cả";sort="hot";q="";renderGrid();syncUI();return}
-  if(e.target.closest("#mzalo")){e.preventDefault();location.href="https://zalo.me/"+CONFIG.zalo;return}
+  if(e.target.closest("#mzalo")){e.preventDefault();const mp=$("#mpick");mp.hidden=!mp.hidden;$("#mzalo").setAttribute("aria-expanded",!mp.hidden);return}
+  if(!e.target.closest("#mpick")&&$("#mpick")&&!$("#mpick").hidden){$("#mpick").hidden=true;$("#mzalo").setAttribute("aria-expanded","false")}
   if(e.target.closest("#morebtn")){more();return}
   const c=e.target.closest(".card");if(c){openItem(c.dataset.id,true);return}
   if(e.target.closest("#x")||e.target.id=="dlg"){close();return}
