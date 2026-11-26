@@ -14,7 +14,7 @@ export async function onRequest(ctx) {
       const pct = d.brandSale[b];
       const n = new Set(d.items.filter(i => i.b == b).map(i => i.g || i.id)).size;
       t = `${b} sale đến -${pct}% | Săn Sale cuối năm`;
-      desc = `${n} mẫu best seller ${b} chính hãng đang sale tại LE NGOC MAI. Bấm để xem và liên hệ đặt.`;
+      desc = `${n} mẫu ${b} chính hãng đang sale tại LE NGOC MAI. Bấm để xem và liên hệ đặt.`;
     }
   } catch (e) {}
   if (!t) return res;
