@@ -315,7 +315,7 @@ footer{border-top:1px solid var(--line);padding-block:40px calc(32px + env(safe-
 .szg{margin-top:12px}.szg summary{cursor:pointer;font-size:12px;letter-spacing:.06em;text-decoration:underline;text-underline-offset:3px;list-style:none;display:inline-block}.szg summary::-webkit-details-marker{display:none}
 .szw{overflow-x:auto;margin-top:10px;-webkit-overflow-scrolling:touch}.szt{border-collapse:collapse;font-size:12px;min-width:100%;white-space:nowrap}.szt th,.szt td{border:1px solid var(--line);padding:7px 9px;text-align:center}.szt th{background:var(--paper);font-weight:600}.szt tr.me td{background:var(--paper);font-weight:600}.szn{font-size:11px;color:var(--soft);margin-top:6px;line-height:1.5}
 .sizes button.na{color:var(--strike);text-decoration:line-through;background:var(--paper);cursor:not-allowed;border-color:var(--line)}
-.tile.sk{background:linear-gradient(110deg,#1b1b1b 30%,#2a2a2a 50%,#1b1b1b 70%);background-size:200% 100%;animation:rise 1s var(--ease) forwards,shim 1.4s linear infinite}
+.cts:not(:empty){margin:8px 0}.promo{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.55);animation:fadein .3s}.promo .pbox{position:relative;max-width:380px;width:100%;background:linear-gradient(160deg,#0e5a3a,#073a25);color:#fff;border:2px solid #f3c24a;padding:30px 22px 22px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.4);animation:pop .35s}.promo .pt{font-size:12px;font-weight:700;letter-spacing:.14em;color:#f3c24a;margin:0 0 10px}.promo .pm{font-size:19px;line-height:1.45;font-weight:600;margin:0 0 6px}.promo .pm b{color:#fff;background:var(--red);padding:0 6px;font-weight:800;white-space:nowrap}.promo .ps{font-size:13px;opacity:.85;margin:0 0 18px}.promo .pgo{display:block;width:100%;border:0;background:var(--red);color:#fff;font:inherit;font-weight:800;letter-spacing:.08em;padding:14px;cursor:pointer}.promo .px{position:absolute;top:6px;right:6px;width:40px;height:40px;border:0;background:none;color:#fff;font-size:26px;line-height:1;cursor:pointer}.tile.sk{background:linear-gradient(110deg,#1b1b1b 30%,#2a2a2a 50%,#1b1b1b 70%);background-size:200% 100%;animation:rise 1s var(--ease) forwards,shim 1.4s linear infinite}
 @keyframes shim{to{background-position:-200% 0}}
 /* ===== Giáng sinh: tuyết rơi nhẹ, dây đèn dưới header, điểm xanh thông + vàng ===== */
 :root{--pine:#0e5a3a;--gold:#c9a24a}
@@ -574,6 +574,7 @@ const CONFIG={
   pageSize:24,                       // số mẫu hiện mỗi lần, cuộn xuống sẽ tải thêm
   siteUrl:"https://lengocmai.com/",      // link sản phẩm gửi kèm tin nhắn / copy
   saleEnds:"2026-11-30T23:59:00+07:00",
+  turnstile:"",                      // site key Cloudflare Turnstile (chống robot gửi đơn)
   /* Giá hiển thị = giá web × tỉ giá bán Vietcombank × 1.07 + 550.000, làm tròn lên bội số 50.000 */
   rates:{AUD:17403.88,USD:25970,VND:1},   // tỉ giá bán VCB lúc 10:36 25/11/2026
   markup:1.07, fee:550000, roundTo:50000,
@@ -815,14 +816,13 @@ function vnPhone(v){let d=String(v||"").replace(/[\s.\-()]/g,"");if(/^\+?84\d{9}
 /* copy ngay trong lần bấm (iPhone Safari cần làm đồng bộ) */
 function copySync(t){let ok=false;try{const a=document.createElement("textarea");a.value=t;a.setAttribute("readonly","");a.style.cssText="position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;font-size:16px";document.body.appendChild(a);a.focus();a.select();a.setSelectionRange(0,t.length);ok=document.execCommand("copy");a.remove()}catch(e){}
   if(!ok&&navigator.clipboard)navigator.clipboard.writeText(t).catch(()=>{});return ok}
-/* lưu đơn về Google Sheet riêng của Mai (qua Google Form, chỉ chủ form xem được câu trả lời) */
-const ORDER_FORM="https://docs.google.com/forms/d/e/1FAIpQLSfAfGn4vHZKsZOwogajsOYvVKclEGxpwtPPSlak7bR-mrjrtw/formResponse";
-function logOrder(ch){try{const L=CART.map(cline);if(!L.length||!cphone)return;const T=ctot(L),{ask}=T;
-  const items=L.map((x,k)=>`${k+1}. ${x.n} (${x.b})${x.col?" · Màu "+x.col:""} · Size ${x.s} · SL ${x.q} · ${lineP(x)} · ${plink(x)}`).join("\n");
-  const key=ch+"|"+cphone+"|"+items;let sent=[];try{sent=JSON.parse(sessionStorage.getItem("lnm_sent")||"[]")}catch(e){}if(sent.includes(key))return;
-  const f=new URLSearchParams({"entry.659917545":fmtPh(cphone),"entry.1613144625":items,"entry.12831059":totP(T)+(ask?` (+${ask} chờ báo giá)`:""),"entry.1748751918":ch});
-  let ok=false;try{ok=navigator.sendBeacon&&navigator.sendBeacon(ORDER_FORM,f)}catch(e){}
-  if(!ok)fetch(ORDER_FORM,{method:"POST",mode:"no-cors",body:f,keepalive:true}).catch(()=>{});
+/* lưu đơn về Sheet riêng của Mai: gửi qua máy chủ lengocmai.com, máy chủ tự tính lại giá và kiểm robot */
+let TS_TOK="";
+function tsMount(){const el=$("#cts");if(!el||!CONFIG.turnstile)return;const go=()=>{try{turnstile.render(el,{sitekey:CONFIG.turnstile,appearance:"interaction-only",callback:t=>{TS_TOK=t},"expired-callback":()=>{TS_TOK=""},"refresh-expired":"auto"})}catch(e){}};
+  if(window.turnstile)go();else{window.__tsq=go;if(!document.getElementById("tsjs")){window.__tsl=()=>window.__tsq&&window.__tsq();const s=document.createElement("script");s.id="tsjs";s.async=true;s.src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=__tsl&render=explicit";document.head.appendChild(s)}}}
+function logOrder(ch){try{if(!CART.length||!cphone)return;const items=CART.map(x=>({id:x.id,s:x.s,q:x.q}));
+  const key=cphone+"|"+JSON.stringify(items);let sent=[];try{sent=JSON.parse(sessionStorage.getItem("lnm_sent")||"[]")}catch(e){}if(sent.includes(key))return;
+  fetch("/api/order",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({phone:cphone,ch,items,token:TS_TOK}),keepalive:true}).catch(()=>{});TS_TOK="";
   sent.push(key);try{sessionStorage.setItem("lnm_sent",JSON.stringify(sent.slice(-20)))}catch(e){}}catch(e){}}
 function ctext(L,ph){const n=L.reduce((a,x)=>a+x.q,0),T=ctot(L),{t,r,sv,ask}=T;
   return `Chào Mai, mình đặt qua lengocmai.com ${n} sản phẩm:\n`+L.map((x,k)=>`${k+1}. ${x.n} (${x.b})${x.col?" · Màu "+x.col:""} · Size ${x.s} · SL ${x.q} · ${lineP(x)}\n${plink(x)}`).join("\n")+
@@ -839,7 +839,7 @@ function renderCart(){const P=$("#cpan");if(!P)return;const L=CART.map(cline),n=
   if(!L.length)body=`<div class="cempty"><p style="margin:0">Giỏ hàng đang trống.</p><button class="btn ghost" id="cshop" type="button" style="min-width:220px">XEM MẪU ĐANG SALE</button></div>`;
   else if(cstep=="list"){body=L.map((x,k)=>`<div class="cl"><a href="/sp/${encodeURIComponent(x.id)}" data-cgo aria-label="Xem ${esc(x.n)}"><img src="${esc(im(x.img,200))}" alt="" loading="lazy"></a><div><b>${esc(x.n)}</b><small>${esc(x.b)}${x.col?" · "+esc(x.col):""} · Size ${esc(x.s)}</small>${x.so?`<small class="cso">Màu này vừa hết hàng online, Mai sẽ báo lại</small>`:""}<div class="cp">${noP(x.b)?"Liên hệ báo giá":`${vnd(webP(x.p)*x.q)}<s>${vnd(x.p*x.q)}</s>`}</div><div class="qty"><button type="button" data-q="${k}" data-d="-1" aria-label="Bớt 1">−</button><span>${x.q}</span><button type="button" data-q="${k}" data-d="1" aria-label="Thêm 1">+</button></div></div><button class="crm" type="button" data-rm="${k}">Xoá</button></div>`).join("");
     ft=`${m?`<div class="creg"><span>Giá thường</span><span>${vnd(r)}</span></div>`:""}<div class="ctot"><span>Giá đặt qua web</span><b>${vnd(t)}</b></div>${m?`<div class="csave"><span>Tiết kiệm (−50.000₫ × ${m} món)</span><span>−${vnd(sv)}</span></div>`:""}${ask?`<p class="cnote">Chưa gồm ${ask} sản phẩm chờ Mai báo giá.</p>`:""}<button class="btn main" id="csend" type="button">GỬI ĐƠN CHO MAI</button><p class="cnote">Giỏ hàng chỉ lưu trên trình duyệt này. Đổi máy hoặc mở trình duyệt khác sẽ không thấy giỏ cũ.</p>`}
-  else if(cstep=="phone")body=`<form class="cform" id="cform" novalidate><label for="cph">Điền số điện thoại của bạn để tiện cho việc chăm sóc khách hàng</label><input id="cph" type="tel" inputmode="tel" autocomplete="tel" placeholder="VD: 09xx 345 678" maxlength="16" value="${esc(cphone||lsGet(PK,""))}"><p class="cerr" id="cerr" role="alert"></p><button class="btn main" type="submit">TIẾP TỤC</button><p class="cnote">Số điện thoại chỉ gửi kèm đơn cho Mai để tư vấn và giữ hàng, không chia sẻ cho ai khác.</p><button class="lnk" type="button" id="cbackl">‹ Quay lại giỏ hàng</button></form>`;
+  else if(cstep=="phone")body=`<form class="cform" id="cform" novalidate><label for="cph">Điền số điện thoại của bạn để tiện cho việc chăm sóc khách hàng</label><input id="cph" type="tel" inputmode="tel" autocomplete="tel" placeholder="VD: 09xx 345 678" maxlength="16" value="${esc(cphone||lsGet(PK,""))}"><p class="cerr" id="cerr" role="alert"></p><div id="cts" class="cts"></div><button class="btn main" type="submit">TIẾP TỤC</button><p class="cnote">Số điện thoại chỉ gửi kèm đơn cho Mai để tư vấn và giữ hàng, không chia sẻ cho ai khác.</p><button class="lnk" type="button" id="cbackl">‹ Quay lại giỏ hàng</button></form>`;
   else if(cstep=="zalo")body=`<div class="cform"><p class="csum"><b style="color:#1a7f37">✓ Đã copy đơn hàng</b></p><ol class="zst"><li>Bấm <b>MỞ ZALO CỦA MAI</b> bên dưới.</li><li>Trong khung chat với Mai, <b>giữ ngón tay vào ô nhập tin</b> rồi chọn <b>Dán</b>.</li><li>Bấm gửi. Mai sẽ báo lại sớm nhất.</li></ol><a class="btn main" id="czopen" href="https://zalo.me/${CONFIG.zalo}" target="_blank" rel="noopener">MỞ ZALO CỦA MAI</a><p class="cnote">Nếu dán không ra chữ, bấm vào khung dưới để chọn toàn bộ và copy lại:</p><textarea class="ztxt" id="ztxt" readonly rows="6">${esc(ctext(L,fmtPh(cphone)))}</textarea><button class="btn ghost" type="button" id="czcopy">COPY LẠI ĐƠN HÀNG</button><button class="lnk" type="button" id="cbacks">‹ Chọn cách gửi khác</button></div>`;
   else body=`<div class="cform"><p class="csum">${n} sản phẩm · Giá đặt qua web <b>${vnd(t)}</b>${sv?` (tiết kiệm ${vnd(sv)})`:""}${ask?" (chưa gồm mẫu chờ báo giá)":""}<br>SĐT: ${esc(fmtPh(cphone))}</p><div class="lbl" style="margin:0">GỬI ĐƠN QUA</div><div class="row2"><button class="opt" id="czalo" type="button">${CZL}<span>Zalo</span></button><a class="opt" id="cmess" href="https://m.me/${CONFIG.messenger}?text=${encodeURIComponent(ctext(L,fmtPh(cphone)))}" target="_blank" rel="noopener">${CMS}<span>Messenger</span></a></div><p class="cnote">Messenger: đơn hàng được điền sẵn vào tin nhắn. Zalo: đơn được copy sẵn, bạn dán vào chat với Mai.</p><button class="lnk" type="button" id="cbackp">‹ Sửa số điện thoại</button></div>`;
   P.innerHTML=hd+`<div class="cbody">${body}</div>`+(ft?`<div class="cft">${ft}</div>`:"")}
@@ -855,9 +855,9 @@ document.addEventListener("click",async e=>{const t=e.target,stop=()=>e.stopProp
   if(t.closest("#cshop")){closeCart();go("/");return}
   const q=t.closest("[data-q]");if(q){const x=CART[+q.dataset.q];if(x){x.q=Math.max(1,Math.min(20,x.q+ +q.dataset.d));csave();renderCart()}return}
   const r=t.closest("[data-rm]");if(r){CART.splice(+r.dataset.rm,1);csave();renderCart();return}
-  if(t.closest("#csend")){cstep="phone";renderCart();const i=$("#cph");if(i&&matchMedia("(hover:hover)").matches)i.focus();return}
+  if(t.closest("#csend")){cstep="phone";renderCart();tsMount();const i=$("#cph");if(i&&matchMedia("(hover:hover)").matches)i.focus();return}
   if(t.closest("#cbackl")){cstep="list";renderCart();return}
-  if(t.closest("#cbackp")){cstep="phone";renderCart();return}
+  if(t.closest("#cbackp")){cstep="phone";renderCart();tsMount();return}
   if(t.closest("#czalo")){const tx=ctext(CART.map(cline),fmtPh(cphone));copySync(tx);logOrder("Zalo");cstep="zalo";renderCart();return}
   if(t.closest("#czcopy")){const a=$("#ztxt");copySync(a.value);a.focus();a.select();toast("Đã copy lại đơn hàng");return}
   if(t.closest("#ztxt")){const a=$("#ztxt");a.select();a.setSelectionRange(0,a.value.length);return}
@@ -910,6 +910,12 @@ function tick(){const d=new Date(CONFIG.saleEnds)-Date.now();if(d<=0){$("#cdv").
   const D=Math.floor(d/864e5),H=Math.floor(d/36e5)%24,M=Math.floor(d/6e4)%60,S=Math.floor(d/1e3)%60,p=n=>String(n).padStart(2,"0");
   $("#cdv").textContent=`${D} ngày ${p(H)}:${p(M)}:${p(S)}`;$("#cD").textContent=D;$("#cH").textContent=p(H);$("#cM").textContent=p(M);$("#cS").textContent=p(S)}
 tick();setInterval(tick,1000);
+/* popup ưu đãi -50.000đ: hiện một lần cho mỗi khách */
+(function(){let seen=false;try{seen=localStorage.getItem("lnm_promo")=="1"}catch(e){}if(seen||/^\/feedback/.test(location.pathname))return;
+  setTimeout(()=>{const d=document.createElement("div");d.className="promo";d.setAttribute("role","dialog");d.setAttribute("aria-modal","true");d.setAttribute("aria-label","Ưu đãi đặt qua web");
+    d.innerHTML=`<div class="pbox"><button class="px" type="button" aria-label="Đóng">×</button><p class="pt">🎁 ƯU ĐÃI ĐẶT QUA WEB</p><p class="pm"><b>lengocmai.com</b> đang có chương trình <b>-50.000 VND</b> với mỗi sản phẩm đặt thông qua Web.</p><p class="ps">Thêm mẫu vào giỏ hàng rồi gửi đơn cho Mai là được giảm ngay.</p><button class="pgo" type="button">XEM MẪU NGAY</button></div>`;
+    const close=()=>{d.remove();document.removeEventListener("keydown",esc_);try{localStorage.setItem("lnm_promo","1")}catch(e){}},esc_=e=>{if(e.key=="Escape")close()};
+    d.addEventListener("click",e=>{if(e.target==d||e.target.closest(".px,.pgo"))close()});document.addEventListener("keydown",esc_);document.body.appendChild(d)},900)})();
 const topEl=$("#top"),pimgs=[...document.querySelectorAll("[data-p]")],still=matchMedia("(prefers-reduced-motion: reduce)").matches;let raf=0;
 function onScroll(){raf=0;const y=scrollY;topEl.classList.toggle("solid",y>40);if(!still&&y<innerHeight*1.4)pimgs.forEach(im=>im.style.transform=`translate3d(0,${-y*im.dataset.p}px,0)`)}
 addEventListener("scroll",()=>{if(!raf)raf=requestAnimationFrame(onScroll)},{passive:true});requestAnimationFrame(onScroll);
