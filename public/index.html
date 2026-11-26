@@ -762,10 +762,10 @@ function fbTarget(f){const L=String(f.link||"").trim();let fc=f.id?findColor(f.i
   const mb=L.match(/\/b\/([a-z0-9-]+)/i)||L.match(/#b-([a-z0-9-]+)/i);if(mb){const b=Object.keys(CONFIG.brandSale||{}).find(x=>bslug(x)==mb[1].toLowerCase());if(b)return{href:"/b/"+bslug(b),label:"Các mẫu "+b}}
   const ml=L.match(/^(?:https?:\/\/)?(?:www\.)?lengocmai\.com(\/[^\s]*)?$/i);if(ml)return{href:ml[1]||"/",label:"LE NGOC MAI"};
   return{}}
-(function(){const s=$("#snow");if(!s)return;const still=matchMedia("(prefers-reduced-motion: reduce)").matches,n=innerWidth<760?18:34;let h="";const R=(a,b)=>(Math.random()*(b-a)+a);
+setTimeout(function(){const s=$("#snow");if(!s)return;const still=matchMedia("(prefers-reduced-motion: reduce)").matches,n=matchMedia("(max-width:759px)").matches?18:34;let h="";const R=(a,b)=>(Math.random()*(b-a)+a);
   for(let k=0;k<n;k++){const st=`left:${R(0,100).toFixed(1)}%;--y:${R(2,96).toFixed(1)}%;--d:${R(9,19).toFixed(1)}s;--w:-${R(0,18).toFixed(1)}s;--x:${R(-40,40).toFixed(0)}px;opacity:${R(.45,.95).toFixed(2)}`;
     h+=k%4==0?`<b style="${st};--s:${R(11,20).toFixed(0)}px">❄</b>`:`<i style="${st};--s:${R(3,7).toFixed(1)}px"></i>`}
-  s.innerHTML=h;if(still)s.style.opacity=".7"})();
+  s.innerHTML=h;if(still)s.style.opacity=".7"},400);
 /* ẩn nút nổi khi đang cuộn trên điện thoại */
 (function(){let st;addEventListener("scroll",()=>{if(innerWidth>760)return;document.body.classList.add("scr");clearTimeout(st);st=setTimeout(()=>document.body.classList.remove("scr"),700)},{passive:true})})();
 function findColor(id){for(const G of items){const c=G.colors.find(c=>c.id==id);if(c)return [G,c]}return []}
@@ -903,7 +903,7 @@ function route(){const h=location.hash,lm=h.match(/^#sp-(.+)$/),lb=h.match(/^#b-
   const pth=location.pathname,m=pth.match(/^\/sp\/(.+)$/),b=pth.match(/^\/b\/([a-z0-9-]+)\/?$/);
   if(m){openItem(decodeURIComponent(m[1]),false);if(!$("#dlg").classList.contains("open")&&items.length&&live)history.replaceState(null,"","/");return}
   if($("#dlg").classList.contains("open")){$("#dlg").classList.remove("open");document.body.style.overflow="";cur=null}
-  const bn=b&&[...new Set(items.map(i=>i.brand))].find(x=>bslug(x)==b[1]);showView(bn||null);scrollTo({top:0,behavior:"instant"})}
+  const bn=b&&[...new Set(items.map(i=>i.brand))].find(x=>bslug(x)==b[1]);showView(bn||null);if(window.__bt)scrollTo({top:0,behavior:"instant"})}
 addEventListener("hashchange",route);addEventListener("popstate",route);
 
 function tick(){const d=new Date(CONFIG.saleEnds)-Date.now();if(d<=0){$("#cdv").textContent="đã kết thúc";return}
@@ -912,9 +912,9 @@ function tick(){const d=new Date(CONFIG.saleEnds)-Date.now();if(d<=0){$("#cdv").
 tick();setInterval(tick,1000);
 const topEl=$("#top"),pimgs=[...document.querySelectorAll("[data-p]")],still=matchMedia("(prefers-reduced-motion: reduce)").matches;let raf=0;
 function onScroll(){raf=0;const y=scrollY;topEl.classList.toggle("solid",y>40);if(!still&&y<innerHeight*1.4)pimgs.forEach(im=>im.style.transform=`translate3d(0,${-y*im.dataset.p}px,0)`)}
-addEventListener("scroll",()=>{if(!raf)raf=requestAnimationFrame(onScroll)},{passive:true});onScroll();
+addEventListener("scroll",()=>{if(!raf)raf=requestAnimationFrame(onScroll)},{passive:true});requestAnimationFrame(onScroll);
 
-function boot(){const b=brand;brand=null;renderHome();route();if(b&&!brand)showView(b)}
+function boot(){const b=brand;brand=null;renderHome();route();if(b&&!brand)showView(b);window.__bt=1}
 boot();sio.observe($("#more"));
 const getData=u=>u?fetch(u).then(r=>r.ok?r.json():null).catch(()=>null):Promise.resolve(null);
 const ok=d=>d&&d.items&&d.items.length?d:null;
