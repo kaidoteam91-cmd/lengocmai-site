@@ -618,16 +618,19 @@ function colorsH(G,c){if(!(G.colors.length>1||c.col))return "";
 let FEED=[],FEED_LIVE=false;
 const driveImg=u=>{const m=String(u).match(/(?:\/d\/|[?&]id=)([\w-]{20,})/);return m?`https://lh3.googleusercontent.com/d/${m[1]}=w1200`:String(u).trim()};
 const spId=u=>{const m=String(u).match(/(?:\/sp\/|#sp-)([^?#\s]+)/);return m?decodeURIComponent(m[1]):""};
-if(CONFIG.feedbackCsv)fetch(CONFIG.feedbackCsv).then(r=>r.ok?r.text():Promise.reject()).then(t=>{FEED=parseCSV(t).slice(1).filter(x=>(x[0]||"").trim()).map(x=>({img:driveImg(x[0]),id:spId(x[1]||""),note:(x[2]||"").trim().slice(0,200)})).reverse();FEED_LIVE=true;if(!$("#fview").hidden)renderFeedback()}).catch(()=>{});
+if(CONFIG.feedbackCsv)fetch(CONFIG.feedbackCsv).then(r=>r.ok?r.text():Promise.reject()).then(t=>{FEED=parseCSV(t).slice(1).filter(x=>(x[0]||"").trim()).map(x=>({img:driveImg(x[0]),id:spId(x[1]||""),link:(x[1]||"").trim().slice(0,300),note:(x[2]||"").trim().slice(0,200)})).reverse();FEED_LIVE=true;if(!$("#fview").hidden)renderFeedback()}).catch(()=>{});
 function renderFeedback(){const g=$("#fgrid");if(!g)return;
   if(!FEED.length){g.innerHTML=`<p class="fempty">Mai đang cập nhật hình feedback, bạn quay lại sau nhé ❄</p>`;return}
-  g.innerHTML=FEED.map((f,k)=>{const fc=f.id&&findColor(f.id),G=fc&&fc[0];const href=G?"/sp/"+encodeURIComponent(f.id):"";
-    const im1=`<img src="${esc(f.img)}" alt="${esc(G?G.name:"Feedback khách hàng")}" loading="${k<6?"eager":"lazy"}" decoding="async">`;
-    return `<figure class="fcard">${href?`<a href="${href}">${im1}</a><a class="fl" href="${href}"><span>${esc(G.name)}</span><em>Xem mẫu →</em></a>`:im1}${f.note?`<p>${esc(f.note)}</p>`:""}</figure>`}).join("")}
-(function(){const s=$("#snow");if(!s)return;const still=matchMedia("(prefers-reduced-motion: reduce)").matches,n=innerWidth<760?18:34;let h="";const R=(a,b)=>(Math.random()*(b-a)+a);
-  for(let k=0;k<n;k++){const st=`left:${R(0,100).toFixed(1)}%;--y:${R(2,96).toFixed(1)}%;--d:${R(9,19).toFixed(1)}s;--w:-${R(0,18).toFixed(1)}s;--x:${R(-40,40).toFixed(0)}px;opacity:${R(.45,.95).toFixed(2)}`;
-    h+=k%4==0?`<b style="${st};--s:${R(11,20).toFixed(0)}px">❄</b>`:`<i style="${st};--s:${R(3,7).toFixed(1)}px"></i>`}
-  s.innerHTML=h;if(still)s.style.opacity=".7"})();
+  g.innerHTML=FEED.map((f,k)=>{const t=fbTarget(f),G=t.G;
+    const im1=`<img src="${esc(f.img)}" alt="${esc(t.label||"Feedback khách hàng")}" loading="${k<6?"eager":"lazy"}" decoding="async">`;
+    return `<figure class="fcard">${t.href?`<a href="${esc(t.href)}">${im1}</a><a class="fl" href="${esc(t.href)}"><span>${esc(t.label)}</span><em>${G?"Xem mẫu →":"Xem ngay →"}</em></a>`:im1}${f.note?`<p>${esc(f.note)}</p>`:""}</figure>`}).join("")}
+/* link feedback: /sp/<id>, link /products/<handle> của web gốc, /b/<brand>, hoặc trang bất kỳ của lengocmai.com */
+function fbTarget(f){const L=String(f.link||"").trim();let fc=f.id?findColor(f.id):[];
+  if(!fc[0]){const m=L.match(/\/products\/([^/?#\s]+)/);if(m){const h=decodeURIComponent(m[1]).toLowerCase();fc=findColor(h);if(!fc[0])for(const G of items){const c=G.colors.find(c=>c.id.startsWith(h));if(c){fc=[G,c];break}}}}
+  if(fc[0])return{G:fc[0],href:"/sp/"+encodeURIComponent(fc[1].id),label:fc[0].name};
+  const mb=L.match(/\/b\/([a-z0-9-]+)/i)||L.match(/#b-([a-z0-9-]+)/i);if(mb){const b=Object.keys(CONFIG.brandSale||{}).find(x=>bslug(x)==mb[1].toLowerCase());if(b)return{href:"/b/"+bslug(b),label:"Các mẫu "+b}}
+  const ml=L.match(/^(?:https?:\/\/)?(?:www\.)?lengocmai\.com(\/[^\s]*)?$/i);if(ml)return{href:ml[1]||"/",label:"LE NGOC MAI"};
+  return{}}
 function findColor(id){for(const G of items){const c=G.colors.find(c=>c.id==id);if(c)return [G,c]}return []}
 function openItem(id,push){
   const [G,c]=findColor(id);if(!G)return;const keep=$("#dlg").classList.contains("open")&&cur&&cur.G==G;
