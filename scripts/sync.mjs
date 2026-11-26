@@ -8,6 +8,9 @@ const CFG = {
   maxPrice: 8000000,                                     // chỉ lấy mẫu có giá hiển thị <= 8 triệu
   brandSale: { "Lioness": 50, "I.AM.GIA": 75, "Alo Yoga": 30 }, // % sale ở ô brand (sửa tay khi brand đổi đợt sale)
   fallbackRates: { AUD: 17403.88, USD: 25970, VND: 1 },
+  rateBounds: { AUD: [12000, 24000] },                    // tỉ giá ngoài khoảng này = coi là lỗi
+  maxJump: 0.06,                                          // tỉ giá mới lệch > 6% so với lần trước = coi là lỗi
+  maxRateAgeH: 72,                                        // tỉ giá cũ quá 72 giờ thì KHÔNG hiện giá AUD
   overridesCsv: process.env.OVERRIDES_CSV || "",         // (tuỳ chọn) CSV: handle | thao_tac (an / ghim)
 };
 
@@ -23,6 +26,8 @@ const BRANDS = [
     cat: p => { const t = (p.product_type || "").split(":")[0].trim();
       if (!t || /^axx$/i.test(t) || /access/i.test(t)) return "Accessories"; return t; } },
   { name: "Alo Yoga", base: "https://www.aloyoga.com/en-vn", cur: "VND", best: "bestsellers", exact: true,
+    cg: p => (p.tags || []).includes("ColorwayType:Limited") ? "Limited" : "Core",
+    skipSoldOut: p => (p.tags || []).includes("clearance"),
     cats: ["Leggings", "Bras", "Tanks", "Short Sleeves", "Long Sleeves", "Pants", "Sweatpants", "Shorts", "Skirts", "Dresses", "Jackets", "Hoodies", "Pullovers", "Accessories"],
     keep: p => /^women/i.test(p.product_type || ""),
     group: p => (p.tags || []).map(t => (t.match(/^StyleId:(.+)$/) || [])[1]).find(Boolean),
@@ -91,10 +96,12 @@ function colorItems(p, b, rates) {
   const g = groupKey(p, b);
   return colors.map(col => {
     const vs = col == null ? p.variants : p.variants.filter(v => v["option" + (ci + 1)] === col);
-    const av = vs.filter(v => v.available); if (!av.length) return null;
+    const av = vs.filter(v => v.available), so = !av.length;
+    if (so && b.skipSoldOut && b.skipSoldOut(p)) return null;
     const sizes = si >= 0 ? p.options[si].values.filter(s => vs.some(v => v["option" + (si + 1)] === s))
       .map(s => [s, vs.some(v => v.available && v["option" + (si + 1)] === s) ? 1 : 0]) : [];
-    const v = av.reduce((a, c) => (+c.price < +a.price ? c : a), av[0]);
+    const pool = so ? vs : av;
+    const v = pool.reduce((a, c) => (+c.price < +a.price ? c : a), pool[0]);
     const now = priceOf(+v.price, b, rates);
     const was = +v.compare_at_price > +v.price ? priceOf(+v.compare_at_price, b, rates) : now;
     let ims = p.images || [];
@@ -108,7 +115,8 @@ function colorItems(p, b, rates) {
     return {
       id: multi ? `${p.handle}-${String(col).toLowerCase().replace(/[^a-z0-9]+/g, "-")}` : p.handle,
       g, n: baseTitle(p.title), col: (multi ? col : (col || colorTitle(p.title))) || "", b: b.name, c: b.cat(p),
-      p: now, w: was, s: sizes, i: ims.slice(0, 4).map(im => img(im.src)),
+      ...(b.cg ? { cg: b.cg(p) } : {}), ...(so ? { so: 1 } : {}),
+      p: now, w: was, s: sizes, i: ims.slice(0, so ? 2 : 4).map(im => img(im.src)),
       t: Date.parse(p.published_at || p.created_at) || 0,
     };
   }).filter(Boolean);
@@ -116,8 +124,17 @@ function colorItems(p, b, rates) {
 
 async function main() {
   let prev = null; try { prev = JSON.parse(await readFile(OUT, "utf8")); } catch {}
-  const live = await vcbRates();
-  const rates = live || prev?.rates || CFG.fallbackRates;
+  // Tỉ giá: chỉ dùng khi hợp lệ. Lỗi/bất thường -> dùng tỉ giá tốt lần trước (nếu chưa quá cũ), không thì tắt giá AUD.
+  const inB = r => r && r.AUD >= CFG.rateBounds.AUD[0] && r.AUD <= CFG.rateBounds.AUD[1];
+  const prevOk = prev?.rateOk !== false && inB(prev?.rates) ? prev.rates : null;
+  let live = await vcbRates(), rateNote = live ? "VCB mới" : "VCB lỗi";
+  if (live && !inB(live)) { console.warn("Tỉ giá VCB ngoài khoảng hợp lệ:", live.AUD); live = null; rateNote = "VCB bất thường"; }
+  if (live && prevOk && Math.abs(live.AUD / prevOk.AUD - 1) > CFG.maxJump) { console.warn("Tỉ giá nhảy quá mạnh:", prevOk.AUD, "->", live.AUD); live = null; rateNote = "VCB nhảy bất thường"; }
+  const goodAt = live ? new Date().toISOString() : (prev?.rateGoodAt || null);
+  const fresh = goodAt && (Date.now() - Date.parse(goodAt)) / 36e5 <= CFG.maxRateAgeH;
+  const rates = live || prevOk || CFG.fallbackRates;
+  const rateOk = !!(live || (prevOk && fresh));
+  if (!live) rateNote += prevOk ? (fresh ? " -> dùng tỉ giá lần trước" : " -> tỉ giá cũ quá hạn, ẨN giá AUD") : " -> không có tỉ giá tốt, ẨN giá AUD";
   const ov = await overrides().catch(() => ({ hide: new Set(), pin: new Set() }));
   const out = [], status = {}, cats = {};
   for (const b of BRANDS) {
@@ -138,6 +155,9 @@ async function main() {
           it.r = rank.get(it.g); items.push(it);
         }
       }
+      // chỉ hiện kiểu còn ít nhất 1 màu còn hàng (giống danh sách best seller của web gốc); màu đã hết vẫn giữ để gạch ngang
+      const live = new Set(items.filter(i => !i.so).map(i => i.g));
+      for (let k = items.length - 1; k >= 0; k--) if (!live.has(items[k].g)) items.splice(k, 1);
       const used = new Set(items.map(i => i.c));
       cats[b.name] = [...b.cats.filter(c => used.has(c)), ...[...used].filter(c => !b.cats.includes(c)).sort()];
       out.push(...items); status[b.name] = items.length;
@@ -149,9 +169,10 @@ async function main() {
     }
   }
   const data = { v: 2, updated: new Date().toISOString(), rates: { AUD: rates.AUD, USD: rates.USD, VND: 1, _at: rates._at || "" },
+    rateOk, rateGoodAt: goodAt, rateNote,
     brandSale: CFG.brandSale, cats, status, items: out };
   await mkdir(new URL("../public/data/", import.meta.url), { recursive: true });
   await writeFile(OUT, JSON.stringify(data));
-  console.log("Tổng:", out.length, "mẫu. Tỉ giá AUD:", rates.AUD, live ? "(VCB mới)" : "(dùng tỉ giá cũ)");
+  console.log("Tổng:", out.length, "mẫu. Tỉ giá AUD:", rates.AUD, "(" + rateNote + ")", rateOk ? "" : "-> GIÁ AUD BỊ ẨN");
 }
 main().catch(e => { console.error(e); process.exit(1); });
