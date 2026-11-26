@@ -1,0 +1,29 @@
+name: Dong bo san pham
+on:
+  schedule:
+    - cron: "7 * * * *"    # mỗi tiếng một lần (phút thứ 7)
+  workflow_dispatch: {}      # bấm "Run workflow" để chạy tay
+permissions:
+  contents: write
+concurrency: { group: sync, cancel-in-progress: false }
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Lấy dữ liệu lần trước (để giữ lại nếu một brand bị lỗi)
+        run: curl -sfL "https://raw.githubusercontent.com/${{ github.repository }}/data/products.json" -o public/data/products.json || true
+      - run: node scripts/sync.mjs
+        env:
+          OVERRIDES_CSV: ${{ vars.OVERRIDES_CSV }}
+      - name: Đẩy dữ liệu lên nhánh "data" (chỉ giữ bản mới nhất, không làm phình repo, không bắt Cloudflare build lại)
+        run: |
+          mkdir out && cp public/data/products.json out/ && cd out
+          git init -q -b data
+          git -c user.name=sync-bot -c user.email=sync-bot@users.noreply.github.com commit -q --allow-empty -m "Dữ liệu $(date -u +%FT%H:%MZ)"
+          git add products.json
+          git -c user.name=sync-bot -c user.email=sync-bot@users.noreply.github.com commit -q --amend -m "Dữ liệu $(date -u +%FT%H:%MZ)"
+          git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" data
