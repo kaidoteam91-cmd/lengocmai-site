@@ -760,7 +760,7 @@ function fbTarget(f){const L=String(f.link||"").trim();let fc=f.id?findColor(f.i
   if(!fc[0]){const m=L.match(/\/products\/([^/?#\s]+)/);if(m){const h=decodeURIComponent(m[1]).toLowerCase();fc=findColor(h);if(!fc[0])for(const G of items){const c=G.colors.find(c=>c.id.startsWith(h));if(c){fc=[G,c];break}}}}
   if(fc[0])return{G:fc[0],href:"/sp/"+encodeURIComponent(fc[1].id),label:fc[0].name};
   const mb=L.match(/\/b\/([a-z0-9-]+)/i)||L.match(/#b-([a-z0-9-]+)/i);if(mb){const b=Object.keys(CONFIG.brandSale||{}).find(x=>bslug(x)==mb[1].toLowerCase());if(b)return{href:"/b/"+bslug(b),label:"Các mẫu "+b}}
-  const ml=L.match(/^(?:https?:\/\/)?(?:www\.)?lengocmai\.com(\/[^\s]*)?$/i);if(ml)return{href:ml[1]||"/",label:"LE NGOC MAI"};
+  const ml=L.match(/^(?:https?:\/\/)?(?:www\.)?lengocmai\.com(\/[^\s]*)?$/i);if(ml)return{href:"/"+(ml[1]||"").replace(/^\/+/,""),label:"LE NGOC MAI"};
   return{}}
 setTimeout(function(){const s=$("#snow");if(!s)return;const still=matchMedia("(prefers-reduced-motion: reduce)").matches,n=matchMedia("(max-width:759px)").matches?18:34;let h="";const R=(a,b)=>(Math.random()*(b-a)+a);
   for(let k=0;k<n;k++){const st=`left:${R(0,100).toFixed(1)}%;--y:${R(2,96).toFixed(1)}%;--d:${R(9,19).toFixed(1)}s;--w:-${R(0,18).toFixed(1)}s;--x:${R(-40,40).toFixed(0)}px;opacity:${R(.45,.95).toFixed(2)}`;
