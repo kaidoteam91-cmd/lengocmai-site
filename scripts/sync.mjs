@@ -33,7 +33,7 @@ const BRANDS = [
     keep: p => /^women/i.test(p.product_type || ""),
     group: p => (p.tags || []).map(t => (t.match(/^StyleId:(.+)$/) || [])[1]).find(Boolean),
     cat: p => { const s = (p.product_type || "").split(":").map(x => x.trim()).filter(Boolean);
-      if (s.includes("Accessories")) return "Accessories"; return s[s.length - 1] || "Tops"; } },
+      if (s.includes("Accessories")) return "Accessories"; return (s[s.length - 1] || "Tops").replace(/^Longe Sleeves$/i, "Long Sleeves"); } },
   { name: "CSB", base: "https://au.shopcsb.com", cur: "AUD", fee: 300000, best: "best-sellers", sep: " | ",
     extra: { "Black Friday": "black-friday", "New": "new-arrivals" },
     order: ["Black Friday", "New", "Best Seller", "Tops", "Bottoms", "Accessories"],
@@ -167,7 +167,7 @@ async function main() {
     try {
       const best = await allPages(`${b.base}/collections/${b.best}/products.json`);
       const all = await allPages(`${b.base}/products.json`);
-      const keep = p => (!b.keep || b.keep(p)) && !ov.hide.has(p.handle) && !/gift ?card|e-?voucher/i.test((p.product_type || "") + " " + p.title);
+      const keep = p => (!b.keep || b.keep(p)) && !ov.hide.has(p.handle) && !/gift ?card|e-?voucher|returns? protection|shipping protection/i.test((p.product_type || "") + " " + p.title);
       // Best Seller = đúng các sản phẩm trong collection best seller của web gốc (thứ tự giữ nguyên).
       // Thứ tự "Nổi bật": kiểu có màu best seller lên trước theo hạng, còn lại xếp sau (mới nhất trước).
       const extra = {};
