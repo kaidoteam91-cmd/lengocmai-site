@@ -807,6 +807,7 @@ function syncUI(){document.querySelectorAll("[data-c]").forEach(x=>x.setAttribut
   $("#fbadge").hidden=cat=="Tất cả"&&sort=="hot"&&!q.trim()}
 function sheet(on){$("#sheet").classList.toggle("open",on);$("#sheet").setAttribute("aria-hidden",!on);document.body.style.overflow=on?"hidden":""}
 function showView(b,fb){
+  {const pc=b&&CONFIG.brandSale&&CONFIG.brandSale[b];document.title=fb?"Ảnh thực tế | LE NGOC MAI":b?`${b}${pc?` sale đến -${pc}%`:""} | Săn Sale cuối năm | LE NGOC MAI`:"LE NGOC MAI"}
   const home=!b&&!fb;$("#home").hidden=!home;$("#bview").hidden=!b||fb;$("#fview").hidden=!fb;document.body.classList.toggle("fbv",!!fb);if(fb){renderFeedback();brand=null;document.body.classList.remove("inb");return}
   if(b&&b!=brand){brand=b;cat="Tất cả";q="";renderFilters();renderGrid()}
   if(home)brand=null;document.body.classList.toggle("inb",!home);
